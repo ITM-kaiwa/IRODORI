@@ -259,7 +259,9 @@
                 { vn: "Nếu có thật nhiều tiền bạn muốn làm gì? Làm cho ai?", jp: "お<ruby>金<rt>かね</rt></ruby>がたくさんあったら、<ruby>誰<rt>だれ</rt></ruby>に<ruby>何<rt>なに</rt></ruby>をしてあげたいですか。" },
                 { vn: "Trước khi đi Nhật hoặc trước khi vào học ở ITM bạn đã được bạn bè, người thân khuyên hoặc dặn dò những điều gì? Bạn nghĩ gì về những điều đó? Hãy kể về nó nhé.", jp: "<ruby>日本<rt>にほん</rt></ruby>に<ruby>行<rt>い</rt></ruby>く<ruby>前<rt>まえ</rt></ruby>／ITMセンターに<ruby>入<rt>はい</rt></ruby>る<ruby>前<rt>まえ</rt></ruby>に<ruby>友達<rt>ともだち</rt></ruby>や<ruby>家族<rt>かぞく</rt></ruby>があなたにどんなことを<ruby>言<rt>い</rt></ruby>いましたか。どう<ruby>思<rt>おも</rt></ruby>いますか。それを<ruby>話<rt>はな</rt></ruby>してください。" }
             ],
-    
+            "custom": []
+        };
+
         let timerInterval;
 
         function displayRandomTopic() {
@@ -305,7 +307,7 @@ function startTimer(seconds) {
                         
         if (timeLeft <= 0) {
             clearInterval(timerInterval);
-            sound.play(); // 音を鳴らす
+            if (sound) { sound.play().catch(e => console.warn(e)); } // 音を鳴らす
             setTimeout(() => {
                 alert("時間です！");
             }, 100);
