@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>会話スピーチ生成ツールVer1.3d</title>
+    <title>会話試験：ロールプレイカード生成　Ver0.1a</title>
     <style>
         * {
             margin: 0;
@@ -171,21 +171,14 @@
 </head>
 <body>
     <div class="container">
-        <h1>会話スピーチ</h1>
+        <h1>ロールプレイ</h1>
         <div class="select-container">
             <select id="testSelect">
-                <option value="4-12">Test 4-12</option>
-                <option value="13-19">Test 13-19</option>
-                <option value="20-25">Test 20-25</option>
-                <option value="26-30">Test 26-30</option>
-                <option value="31-35">Test 31-35</option>
-                <option value="36-40">Test 36-40</option>
-                <option value="41-45">Test 41-45</option>
-                <option value="46-50">Test 46-50</option>
-                <option value="custom1">カスタム１</option>
-                <option value="custom2">カスタム２</option>
-                <option value="custom3">カスタム３</option>
-            </select>
+                <option value="nhapmon">入門</option>
+                <option value="socap1">初級１</option>
+                <option value="socap2">初級２</option>
+                <option value="custom">カスタム</option>
+              </select>
             <button onclick="displayRandomTopic()">開始</button>
             <button onclick="resetTopic()">リセット</button>
         </div>
@@ -195,8 +188,7 @@
 
         <!-- タイマー機能エリア（文章表示欄の下に配置、横並び構成） -->
         <div class="timer-container">
-            <button onclick="startTimer(180)">3分</button>
-            <button onclick="startTimer(120)">2分</button>
+            <button onclick="startTimer(90)">90秒</button>
             <div id="timerDisplay">00:00</div>
         </div>
     </div>
@@ -210,7 +202,7 @@
 
     <script>
         const topics = {
-            "4-12": [
+            "nhapmon": [
                 { vn: "Miêu tả về một ngày của bạn. (Buổi sáng, buổi chiều, buổi tối làm gì, vv…)", jp: "あなたの<ruby>１日<rt>いちにち</rt></ruby>について<ruby>話<rt>はな</rt></ruby>してください。" },
                 { vn: "Hãy kể về lần về quê gần đây nhất của bạn (sử dụng 5W1H: Cùng ai, phương tiện, làm gì, thời gian….)", jp: "<ruby>最近<rt>さいきん</rt></ruby>の<ruby>故郷<rt>ふるさと</rt></ruby>での<ruby>一日<rt>いちにち</rt></ruby>について<ruby>話<rt>はな</rt></ruby>してください。" },
                 { vn: "Hãy kể về ngày chủ nhật tuần trước của bạn.", jp: "あなたは<ruby>先週<rt>せんしゅう</rt></ruby>の<ruby>日曜日<rt>にちようび</rt></ruby>に<ruby>何<rt>なに</rt></ruby>をしましたか。<ruby>話<rt>はな</rt></ruby>してください。" },
@@ -232,7 +224,7 @@
                 { vn: "Hãy giới thiệu và miêu tả về người mà bạn quý (thích) nhất.", jp: "あなたのいちばん<ruby>好<rt>す</rt></ruby>きな<ruby>人<rt>ひと</rt></ruby>について、<ruby>紹介<rt>しょうかい</rt></ruby>してください。" },
                 { vn: "Hãy giới thiệu và miêu tả về món đồ mà bạn trân quý nhất.", jp: "あなたのいちばん<ruby>好<rt>す</rt></ruby>きなものや、<ruby>大切<rt>たいせつ</rt></ruby>なものを<ruby>紹介<rt>しょうかい</rt></ruby>してください。" }
             ],
-            "13-19": [
+            "socap1": [
                 { vn: "Hãy kể về những điều bạn muốn làm trong tương lai.", jp: "<ruby>将来<rt>しょうらい</rt></ruby><ruby>何<rt>なに</rt></ruby>をしたいですか。<ruby>話<rt>はな</rt></ruby>してください。" },
                 { vn: "Hãy kể về những điều bạn muốn làm ở Nhật.", jp: "<ruby>日本<rt>にほん</rt></ruby>でしたいことを<ruby>話<rt>はな</rt></ruby>してください。" },
                 { vn: "Hãy giới thiệu về một số quy tắc ở Trung tâm tiếng Nhật ITM.", jp: "ITMセンターの<ruby>規則<rt>きそく</rt></ruby>（ルール）を<ruby>紹介<rt>しょうかい</rt></ruby>してください。" },
@@ -250,7 +242,7 @@
                 { vn: "Đồ vật bạn muốn có nhất là gì? Lý do vì sao bạn muốn có nó?", jp: "<ruby>今<rt>いま</rt>いちばん</ruby><ruby>欲<rt>ほ</rt></ruby>しいものはなんですか？どうしてですか。<ruby>話<rt>はな</rt></ruby>してください。" },
                 { vn: "Từ trước đến nay bạn đã từng đi đâu chơi xa chưa? Bạn đã làm những gì ở đó? Hãy kể về nó nhé.", jp: "あなたが<ruby>今<rt>いま</rt></ruby>までどこへ<ruby>行<rt>い</rt></ruby>ったことがありますか。そこで何をしましたか。<ruby>話<rt>はな</rt></ruby>してください。" }
             ],
-            "20-25": [
+            "socap2": [
                 { vn: "Khi bạn bị ốm/bị bệnh, ai đó đã làm những gì để giúp đỡ bạn. Hãy kể về nó.", jp: "あなたが<ruby>病気<rt>びょうき</rt></ruby>のとき、<ruby>誰<rt>だれ</rt></ruby>が<ruby>何<rt>なに</rt></ruby>をしてくれましたか。<ruby>話<rt>はな</rt></ruby>してください。" },
                 { vn: "Hãy kể về 1 lần bạn được bạn của mình làm cho/giúp đỡ cho việc gì đó.", jp: "<ruby>友<rt>とも</rt></ruby>だちがあなたに<ruby>親切<rt>しんせつ</rt></ruby>にしてくれたことについて、<ruby>話<rt>はな</rt></ruby>してください。" },
                 { vn: "Bạn nghĩ như thế nào về cuộc sống ở thành phố hiện tại bạn đang sống.", jp: "<ruby>住<rt>す</rt></ruby>んでいる<ruby>町<rt>まち</rt></ruby>の<ruby>生活<rt>せいかつ</rt></ruby>についてどう<ruby>思<rt>おも</rt></ruby>いますか。" },
@@ -267,79 +259,7 @@
                 { vn: "Nếu có thật nhiều tiền bạn muốn làm gì? Làm cho ai?", jp: "お<ruby>金<rt>かね</rt></ruby>がたくさんあったら、<ruby>誰<rt>だれ</rt></ruby>に<ruby>何<rt>なに</rt></ruby>をしてあげたいですか。" },
                 { vn: "Trước khi đi Nhật hoặc trước khi vào học ở ITM bạn đã được bạn bè, người thân khuyên hoặc dặn dò những điều gì? Bạn nghĩ gì về những điều đó? Hãy kể về nó nhé.", jp: "<ruby>日本<rt>にほん</rt></ruby>に<ruby>行<rt>い</rt></ruby>く<ruby>前<rt>まえ</rt></ruby>／ITMセンターに<ruby>入<rt>はい</rt></ruby>る<ruby>前<rt>まえ</rt></ruby>に<ruby>友達<rt>ともだち</rt></ruby>や<ruby>家族<rt>かぞく</rt></ruby>があなたにどんなことを<ruby>言<rt>い</rt></ruby>いましたか。どう<ruby>思<rt>おも</rt></ruby>いますか。それを<ruby>話<rt>はな</rt></ruby>してください。" }
             ],
-            "26-30": [
-                { "vn": "Bây giờ bạn đã có thể làm gì bằng tiếng Nhật.", "jp": "<ruby>今<rt>いま</rt></ruby, してあなたは<ruby>日本語<rt>にほんご</rt></ruby>で<ruby>何<rt>なに</rt></ruby>ができますか。" },
-                { "vn": "Hãy nói về những việc bạn có thể làm và giới thiệu điểm mạnh của bản thân nhé.", "jp": "あなたが<ruby>出来<rt>でき</rt></ruby>ることを<ruby>話<rt>はな</rt></ruby>して、<ruby>自己<rt>じこ</rt></ruby>PRしてください。" },
-                { "vn": "Bạn hãy giới thiệu về cách học tiếng Nhật của mình.", "jp": "あなたの<ruby>日本語<rt>にほんご</rt></ruby>の<ruby>勉強<rt>べんきょう</rt></ruby><ruby>方法<rt>ほうほう</rt></ruby>について<ruby>紹介<rt>しょうかい</rt></ruby>してください。" },
-                { "vn": "Từ Trung tâm ITM, hàng ngày bạn có thể nghe và thấy được những gì.", "jp": "ITMセンターから、<ruby>毎日<rt>まいにち</rt></ruby>どんな<ruby>音<rt>おと</rt></ruby>が<ruby>聞<rt>き</rt></ruby>こえますか。どんなものが<ruby>見<rt>み</rt></ruby>えますか。" },
-                { "vn": "Hãy kể về một người mà bạn nghĩ là giỏi/ người bạn hâm mộ. Người đó có thể làm được những gì?", "jp": "あなたがすごいと<ruby>思<rt>おも</rt></ruby>う<ruby>人<rt>ひと</rt></ruby>について<ruby>話<rt>はな</rt></ruby>してください。（<ruby>尊敬<rt>そんけい</rt></ruby>している<ruby>人<rt>ひと</rt></ruby>）。その<ruby>人<rt>ひと</rt></ruby>は<ruby>何<rt>なに</rt></ruby>ができますか。" },
-                { "vn": "Bạn đã từng đánh mất hoặc bỏ quên đồ chưa? Hãy kể về nó.", "jp": "<ruby>物<rt>もの</rt></ruby>をなくしてしまったり、<ruby>忘<rt>わす</rt></ruby>れてしまったりしたことはありますか。その<ruby>時<rt>とき</rt></ruby>のことを<ruby>話<rt>はな</rt></ruby>してください。" },
-                { "vn": "Bạn thường chuẩn bị gì trước khi đi du lịch.", "jp": "<ruby>旅行<rt>りょこう</rt></ruby>に<ruby>行<rt>い</rt></ruby>く<ruby>前<rt>まえ</rt></ruby>前に、あなたはどんな<ruby>準備<rt>じゅんび</rt></ruby>をしますか。" },
-                { "vn": "Hãy kể về sở thích của bạn và lý do bạn thích nó.", "jp": "あなたの<ruby>趣味<rt>しゅみ</rt></ruby>と、それを<ruby>好<rt>す</rt></ruby>きな<ruby>理由<rt>りゆう</rt></ruby>を<ruby>話<rt>はな</rt></ruby>してください。" },
-                { "vn": "Bạn đã từng thất bại hoặc mắc lỗi gì? Hãy kể về nó nhé.", "jp": "あなたの<ruby>今<rt>いま</rt></ruby>までの<ruby>失敗<rt>しっぱい</rt></ruby>やミスについて、<ruby>話<rt>はな</rt></ruby>してください。" },
-                { "vn": "Tại sao bạn lại vào trung tâm ITM học. Hãy nói lý do nhé.", "jp": "どうしてITMセンターに<ruby>入<rt>はい</rt></ruby>りましたか。<ruby>理由<rt>りゆう</rt></ruby>を<ruby>話<rt>はな</rt></ruby>してください。" },
-                { "vn": "Sắp đến sinh nhật bạn của bạn rồi. Bạn sẽ chuẩn bị những gì trước?", "jp": "もうすぐ<ruby>友達<rt>ともだち</rt></ruby>の<ruby>誕生日<rt>たんじょうび</rt></ruby>です。どんな<ruby>準備<rt>じゅんび</rt></ruby>をしておきますか。" },
-                { "vn": "Trước khi sang Nhật, bạn sẽ chuẩn bị những gì? Cho đến giờ bạn đã chuẩn bị những gì rồi?", "jp": "<ruby>日本<rt>にほん</rt></ruby>へ<ruby>行<rt>い</rt></ruby>く<ruby>前<rt>まえ</rt></ruby>に<ruby>何<rt>なに</rt></ruby>を<ruby>準備<rt>じゅんび</rt></ruby>しておきますか。<ruby>今<rt>いま</rt></ruby>までに<ruby>何<rt>なに</rt></ruby>を<ruby>準備<rt>じゅんび</rt></ruby>しておきましたか。" },
-                { "vn": "Hãy giới thiệu về một địa điểm bạn thích hoặc một địa điểm mà bạn thường hay đến.", "jp": "あなたの<ruby>好<rt>す</rt></ruby>きな<ruby>場所<rt>ばしょ</rt></ruby>、またはよく<ruby>行<rt>い</rt></ruby>く<ruby>場所<rt>ばしょ</rt></ruby>について<ruby>紹介<rt>しょうかい</rt></ruby>してください。" },
-                { "vn": "Hãy nói về một lần bạn giúp đỡ ai đó hoặc ai đó giúp đỡ bạn.", "jp": "<ruby>人<rt>ひと</rt></ruby>を<ruby>手伝<rt>てつだ</rt></ruby>ったこと、または<ruby>手伝<rt>てつだ</rt></ruby>ってもらったことについて<ruby>話<rt>はな</rt></ruby>してください。" },
-                { "vn": "Gần đây hoặc cho đến bây giờ, bạn đã có điều gì đáng tiếc không? Đó là chuyện gì? Hãy kể về nó nhé.", "jp": "<ruby>最近<rt>さいきん</rt></ruby>/<ruby>今<rt>いま</rt></ruby>まで<ruby>残念<rt>ざんねん</rt></ruby>だったことはありますか。どんなことですか。<ruby>話<rt>はな</rt></ruby>してください。" }
-            ],
-            "31-35": [
-                { "vn": "Tương lai bạn muốn sống ở Việt Nam hay Nhật Bản? Lý do vì sao?", "jp": "<ruby>将来<rt>しょうらい</rt></ruby>、ベトナムと<ruby>日本<rt>にほん</rt></ruby>とどちらに<ruby>住<rt>す</rt></ruby>みたいですか。<ruby>理由<rt>りゆう</rt></ruby>も<ruby>話<rt>はな</rt></ruby>してください。" },
-                { "vn": "Hãy kể về dự định trong tuần này hoặc dự định trong tuần sau của bạn.", "jp": "<ruby>今週<rt>こんしゅう</rt></ruby>/<ruby>来週<rt>らいしゅう</rt></ruby>のあなたの<ruby>予定<rt>よてい</rt></ruby>を<ruby>話<rt>はな</rt></ruby>してください。" },
-                { "vn": "Nếu chỉ sống một mình thì bạn muốn sống ở đâu, thành phố hay vùng quê? Lý do vì sao?", "jp": "もし<ruby>一人<rt>ひとり</rt></ruby>で<ruby>住<rt>す</rt></ruby>むとしたら、<ruby>都会<rt>とかい</rt></ruby>と<ruby>田舎<rt>いなか</rt></ruby>とどちらがいいですか。<ruby>理由<rt>りゆう</rt></ruby>を<ruby>話<rt>はな</rt></ruby>してください。" },
-                { "vn": "Sau khi đến Nhật, bạn có những dự định gì ngoài công việc. Hãy nói về những dự định đó.", "jp": "<ruby>日本<rt>にほん</rt></ruby>に<ruby>行<rt>い</rt></ruby>ったら、<ruby>仕事<rt>しごと</rt></ruby><ruby>以外<rt>いがい</rt></ruby>で<ruby>何<rt>なに</rt></ruby>をしようと<ruby>思<rt>おモ</rt></ruby>っていますか。" },
-                { "vn": "Hãy xem tôi là một bạn học viên mới, và giới thiệu/đưa ra lời khuyên cho tôi về cách học của bạn.", "jp": "あなたの<ruby>勉強<rt>べんきょう</rt></ruby><ruby>方法<rt>ほうほう</rt></ruby>について、<ruby>後輩<rt>こうはい</rt></ruby>にアドバイスしてください。わたしを<ruby>後輩<rt>こうはい</rt></ruby>だと<ruby>思<rt>おも</rt></ruby>って<ruby>話<rt>はな</rt></ruby>してください。" },
-                { "vn": "Theo bạn, cần phải chú ý những điều gì khi tham gia giao thông ở Nhật Bản.", "jp": "<ruby>日本<rt>にほん</rt></ruby>の<ruby>交通<rt>こうつう</rt></ruby>で、<ruby>気<rt>き</rt></ruby>をつけることはなんですか。" },
-                { "vn": "Theo bạn, cần phải chú ý những điều gì về cuộc sống ở Nhật.", "jp": "<ruby>日本<rt>にほん</rt></ruby>の<ruby>生活<rt>せいかつ</rt></ruby>で<ruby>気<rt>き</rt></ruby>をつけることは<ruby>何<rt>なん</rt></ruby>ですか。" },
-                { "vn": "Hãy xem tôi là một bạn học viên thường xuyên đi học muộn. Bạn hãy đưa ra những lời khuyên cho tôi.", "jp": "<ruby>遅刻<rt>ちこく</rt></ruby>が多い<ruby>後輩<rt>こうはい</rt></ruby>にアドバイスしてください。わたしを<ruby>後輩<rt>こうはい</rt></ruby>だと<ruby>思<rt>おも</rt></ruby>って<ruby>話<rt>はな</rt></ruby>してください。" },
-                { "vn": "Hãy kể về những dự định trong tối nay của bạn.", "jp": "<ruby>今晩<rt>こんばん</rt></ruby>、<ruby>何<rt>なに</rt></ruby>をしようと<ruby>思<rt>おも</rt></ruby>っていますか。" },
-                { "vn": "Vào ngày nghỉ tiếp theo bạn dự định sẽ làm gì.", "jp": "<ruby>次<rt>つぎ</rt></ruby>の<ruby>休<rt>やす</rt></ruby>みに<ruby>何<rt>なに</rt></ruby>をしようと<ruby>思<rt>おも</rt></ruby>っていますか。" },
-                { "vn": "Hãy nói về những dự định của bạn cho đến trước lúc đi Nhật.", "jp": "<ruby>日本<rt>にほん</rt></ruby>へ<ruby>行<rt>い</rt></ruby>くまでに<ruby>何<rt>なに</rt></ruby>をするのか<ruby>予定<rt>よてい</rt></ruby>を<ruby>話<rt>はな</rt></ruby>してください。" },
-                { "vn": "Bạn dự định sẽ làm gì sau khi kết thúc thời gian thực tập ở Nhật.", "jp": "<ruby>日本<rt>にほん</rt></ruby>での<ruby>実習<rt>じっしゅう</rt></ruby>が<ruby>終<rt>お</rt></ruby>わった<ruby>後<rt>あと</rt></ruby>、<ruby>何<rt>なに</rt></ruby>をするつもりですか。" },
-                { "vn": "Theo bạn nghĩ nếu có gì thì sẽ trở nên hạnh phúc. Lý do tại sao.", "jp": "<ruby>何<rt>なに</rt></ruby>があれば、<ruby>幸<rt>しあわ</rt></ruby>せになれると<ruby>思<rt>おも</rt></ruby>いますか。どうしてですか。" },
-                { "vn": "Bạn đã từng nấu món mì chưa? Hãy dùng まず、つぎに、それから、最後に để giải thích về cách nấu món mì nhé.", "jp": "ラーメンを<ruby>作<rt>つく</rt></ruby>ったことがありますか。「まず、つぎに、それから、<ruby>最後<rt>さいご</rt></ruby>に」を<ruby>使<rt>つか</rt></ruby>って、<ruby>作<rt>つく</rt></ruby>り<ruby>方<rt>かた</rt></ruby>を<ruby>説明<rt>せつめい</rt></ruby>してください。" },
-                { "vn": "Theo bạn, sẽ có những tiện lợi gì khi sống ở nông thôn. Hãy kể về nó.", "jp": "<ruby>田舎<rt>いなか</rt></ruby>に<ruby>住<rt>す</rt></ruby>んでいて<ruby>便利<rt>べんり</rt></ruby>だと<ruby>思<rt>おも</rt></ruby>うことを<ruby>話<rt>はな</rt></ruby>してください。" }
-            ],
-            "36-40": [
-                { "vn": "Để bản thân được tốt hơn mỗi ngày, bạn đang cố gắng làm gì. Hãy kể về điều đó. (ví dụ về sức khoẻ, về cuộc sống, về học tập…)", "jp": "<ruby>自分<rt>じぶん</rt></ruby>がもっとよくなるように、<ruby>毎日<rt>まいにち</rt></ruby>どんなことをしていますか。<ruby>話<rt>話</rt></ruby>してください。（例えば：<ruby>健康<rt>けんこう</rt></ruby><ruby>面<rt>めん</rt></ruby>、<ruby>生活<rt>せいかつ</rt></ruby><ruby>面<rt>めん</rt></ruby>、<ruby>日本語<rt>にほんご</rt></ruby>、<ruby>勉強<rt>べんきょう</rt></ruby><ruby>面<rt>めん</rt></ruby>など）" },
-                { "vn": "Hãy kể về những khả năng bạn đã có thể làm được kể từ sau khi học ở Trung tâm ITM.", "jp": "ITMセンターに<ruby>来<rt>き</rt></ruby>てから<ruby>出来<rt>でき</rt></ruby>るようになったことを<ruby>話<rt>はな</rt></ruby>してください。" },
-                { "vn": "Hãy kể về một thói quen tốt mà bạn đang duy trì.", "jp": "あなたが<ruby>毎日<rt>まいにち</rt></ruby><ruby>続<rt>つづ</rt></ruby>けている<ruby>良<rt>よ</rt></ruby>い<ruby>習慣<rt>しゅうかん</rt></ruby>について<ruby>話<rt>はな</rt></ruby>してください。" },
-                { "vn": "Để nói tiếng Nhật tốt hơn, mỗi ngày bạn đang làm gì. Hãy kể về điều đó.", "jp": "<ruby>日本語<rt>にほんご</rt></ruby>が<ruby>上手<rt>じょうず</rt></ruby>に<ruby>話<rt>はな</rt></ruby>せるように、<ruby>毎日<rt>まいにち</rt></ruby><ruby>何<rt>なに</rt></ruby>をしていますか。" },
-                { "vn": "Để có một tương lai tốt hơn, theo bạn bây giờ nên làm gì.", "jp": "<ruby>将来<rt>しょうらい</rt></ruby>のために、<ruby>今<rt>いま</rt></ruby><ruby>何<rt>なに</rt></ruby>をしたらいいと<ruby>思<rt>おも</rt></ruby>いますか。" },
-                { "vn": "Hãy kể chi tiết về một lần bạn mắc lỗi nên bị ba metro hoặc thầy cô chú ý.", "jp": "あなたがやった<ruby>過<rt>あやま</rt></ruby>ちで、<ruby>両親<rt>りょうしん</rt></ruby>や<ruby>先生<rt>せんせい</rt></ruby>に<ruby>叱<rt>しか</rt></ruby>られたことにについて<ruby>話<rt>はな</rt></ruby>してください。" },
-                { "vn": "Khi còn nhỏ bạn đã từng được khen hoặc từng bị chú ý (la mắng) điều gì. Hãy kể chi tiết về việc đó.", "jp": "<ruby>子供<rt>こども</rt></ruby>のとき<ruby>何<rt>なに</rt></ruby>をして<ruby>褒<rt>ほ</rt></ruby>められましたか／<ruby>叱<rt>しか</rt></ruby>られましたか。<ruby>詳<rt>くわ</rt></ruby>しく<ruby>話<rt>はな</rt></ruby>してください。" },
-                { "vn": "Hãy kể chi tiết về một việc mà gần đây bạn được khen hoặc bị chú ý (la mắng).", "jp": "<ruby>最近<rt>さいきん</rt></ruby>、<ruby>褒<rt>ほ</rt></ruby>められたことまたは、<ruby>叱<rt>しか</rt></ruby>られたことについて、<ruby>詳<rt>くわ</rt></ruby>しく<ruby>話<rt>はな</rt></ruby>してください。" },
-                { "vn": "Bạn đã có thể làm được những điều gì vào lúc nào hoặc khi mấy tuổi. Hãy nhớ lại từ lúc còn nhỏ và kể nhé.", "jp": "あなたはいつ／<ruby>何歳<rt>なんさい</rt></ruby>で、<ruby>何<rt>なに</rt></ruby>が<ruby>出来<rt>でき</rt></ruby>るようになりましたか。<ruby>子供<rt>こども</rt></ruby>の<ruby>頃<rt>ころ</rt></ruby>を<ruby>思<rt>おも</rt></ruby>い<ruby>出<rt>だ</rt></ruby>して、<ruby>話<rt>はな</rt></ruby>してください。" },
-                { "vn": "Quê hương của bạn so với lúc bạn còn nhỏ và bây giờ có gì thay đổi không? Hãy kể cụ thể về những điều đã thay đổi nhé.", "jp": "あなたの<ruby>故郷<rt>ふるさと</rt></ruby>は、あなたが<ruby>子供<rt>こども</rt></ruby>の<ruby>時<rt>とき</rt></ruby>と<ruby>今<rt>いま</rt></ruby>で、<ruby>何<rt>なに</rt></ruby>か<ruby>変<rt>かわ</rt></ruby>わりましたか。<ruby>変<rt>かわ</rt></ruby>わったことについて<ruby>詳<rt>くわ</rt></ruby>しく<ruby>話<rt>はな</rt></ruby>してください。" },
-                { "vn": "Bạn giỏi làm việc gì? Không giỏi (yếu) trong việc gì? Hãy kể về nó nhé.", "jp": "あなたは<ruby>何<rt>なに</rt></ruby>をするのが<ruby>得意<rt>とくい</rt></ruby>で、<ruby>何<rt>なに</rt></ruby>をするのが<ruby>苦手<rt>にがて</rt></ruby>ですか。" },
-                { "vn": "Từ trước đến nay, bạn đã từng thử thách bản thân điều gì chưa? Thử thách nhỏ cũng được, hãy kể lại nhé.", "jp": "あなたが<ruby>今<rt>いま</rt></ruby>までチャレンジしたことについて<ruby>話<rt>はな</rt></ruby>してください。<ruby>小<rt>ちい</rt></ruby>さなチャレンジでもいいです。" },
-                { "vn": "Hãy nói về một thầy/cô giáo hoặc một người mà bạn nghĩ đã giúp bạn tiến bộ.", "jp": "あなたの<ruby>成長<rt>せいちょう</rt></ruby><ruby>を助<rt>たす</rt></ruby>けてくれた<ruby>先生<rt>せんせい</rt></ruby>や<ruby>人<rt>ひと</rt></ruby>について<ruby>話<rt>はな</rt></ruby>してください。" },
-                { "vn": "Hãy kể thật chi tiết về mục đích/lý do bạn đi Nhật.", "jp": "<ruby>日本<rt>にほん</rt></ruby>で<ruby>働<rt>はたら</rt></ruby>きたい<ruby>理由<rt>りゆう</rt></ruby>を、<ruby>詳<rt>くわ</rt></ruby>しく<ruby>話<rt>はな</rt></ruby>してください。" },
-                { "vn": "Hãy kể về một sự kiện bạn đã tham gia gần đây (ví dụ: lễ hội, hoạt động ở Trung tâm hoặc ở bên ngoài) và cảm nhận của bạn.", "jp": "あなたが<ruby>最近<rt>さいきん</rt></ruby>、<ruby>参加<rt>さんか</rt></ruby>したイベントや<ruby>祭<rt>まつ</rt></ruby>りやセンターの<ruby>活動<rt>かつどう</rt></ruby>について<ruby>話<rt>はな</rt></ruby>してください。どう<ruby>思<rt>おも</rt></ruby>いましたか。" }
-            ],
-            "41-45": [],
-            "46-50": [],
-            "custom1": [
-                { "vn": "Bây giờ bạn đã có thể làm gì bằng tiếng Nhật.", "jp": "<ruby>今<rt>いま</rt></ruby>、あなたは<ruby>日本語<rt>にほんご</rt></ruby>で<ruby>何<rt>なに</rt></ruby>が<ruby>出来<rt>でき</rt></ruby>ますか。"},
-                { "vn": "Bạn hãy giới thiệu về cách học tiếng Nhật của mình.", "jp": "あなたの<ruby>日本語<rt>にほんご</rt></ruby>の<ruby>勉強<rt>べんきょう</rt>方法<rt>ほうほう</rt></ruby>について<ruby>紹介<rt>しょうかい</rt></ruby>してください"},       
-                { "vn": "Hãy kể về một người mà bạn nghĩ là giỏi/ người bạn hâm mộ. Người đó có thể làm được những gì ?", "jp": "あなたが「すごい」と<ruby>思<rt>おも</rt></ruby>う<ruby>人<rt></ruby>について<ruby>話<rt>はな</rt></ruby>してください。その人は<ruby>何<rt>なに</rt></ruby>が<ruby>出来<rt>でき</rt></ruby>ますか。"},
-                { "vn": "Bạn đã từng đánh mất hoặc bỏ quên đồ chưa ? Hãy kể về nó.", "jp": "モノをなくしてしまったり、<ruby>忘<rt>わす</rt>れてしまったりしたことは　ありますか。その<ruby>時<rt>とき</rt></ruby>のことを<ruby>話<rt>はな</rt></ruby>してください。"},
-                { "vn": "BBạn thường chuẩn bị gì trước khi đi du lịch.", "jp": "<ruby>旅行<rt>りょこう</rt></ruby>に<ruby>行<rt>い</rt></ruby>く<ruby>前<rt>まえ</rt></ruby>に、あなたはどんな<ruby>準備<rt>じゅんび</rt></ruby>をしますか。"},
-            ],
-             "custom2": [
-                { "vn": "Miêu tả về một ngày của bạn. (Buổi sáng, buổi chiều, buổi tối làm gì, vv…)", "jp": "あなたの<ruby>１日<rt>いちにち</rt></ruby>について、<ruby>話<rt>はな</rt></ruby>してください。（あさ、ごご、よる など）"},
-                { "vn": "Hãy kể lại một lần bạn đi du lịch (đã đi đâu, đi với ai, làm gì…?)", "jp": "<ruby>旅行<rt>りょこう</rt>に<ruby>行<rt>い</rt>ったことについて、<ruby>話<rt>はな</rt></ruby>してください。（いつ、どこへ、だれと、どう など）"},       
-                { "vn": "Hãy giới thiệu về sở thích của bạn.", "jp": "あなたの<ruby>趣味<rt>しゅみ</rt>について、<ruby>話<rt>はな</rt></ruby>してください。"},
-            ],
-            "custom3": [
-                { "vn": "Sau khi đến Nhật, bạn có những dự định gì ngoài công việc. Hãy nói về những dự định đó.", "jp": "<ruby>日本<rt>にほん</rt></ruby>に<ruby>行<rt>い</rt></ruby>ったら、<ruby>仕事<rt>しごと</rt></ruby><ruby>以外<rt>いがい</rt></ruby>で<ruby>何<rt>なに</rt></ruby>をしようと<ruby>思<rt>おも</rt></ruby>っていますか。"},
-                { "vn": "Theo bạn, cần phải chú ý những điều gì về cuộc sống ở Nhật.", "jp": "<ruby>日本<rt>にほん</rt></ruby>の<ruby>生活<rt>せいかつ</rt></ruby>で<ruby>気<rt>き</rt></ruby>をつけることは<ruby>何<rt>なん</rt></ruby>ですか。"},       
-                { "vn": "Bạn đã từng nấu món mỳ chưa ? Hãy dùng まず、つぎに、それから、<ruby>最後<rt>さいご</rt></ruby>にđể giải thích về cách nấu món mỳ nhé.",
-                 "jp": "ラーメンを<ruby>作<rt>つく</rt></ruby>ったことがありますか。「まず、つぎに、それから、<ruby>最後<rt>さいご</rt></ruby>に」を<ruby>使<rt>つか</rt></ruby>って、<ruby>作<rt>つく</rt></ruby>り<ruby>方<rt>かた</rt></ruby>を<ruby>説明<rt>せつめい</rt></ruby>してください。"},
-            ]
-        };
-
+    
         let timerInterval;
 
         function displayRandomTopic() {
