@@ -1,3 +1,17 @@
+プルダウンリスト（試験範囲選択）を、**タイトル（`<h1>会話試験：ロールプレイカード</h1>`）のすぐ下**へ移動し、上から下へと自然に操作できるUIレイアウトに改修しました。
+
+### 改修後の画面イメージ・動線
+1. **タイトル**（会話試験：ロールプレイカード）
+2. **試験範囲プルダウン**（ここで課・範囲を選択）
+3. **カード表示エリア**（左：学生カード / 右：教員カード）
+4. **操作ボタン**（🔀 カードを引く / 👁️ 教員カード表示 / 🔄 リセット）
+5. **タイマー ＆ 録音エリア**
+
+---
+
+### 改修版 `index.html`（全体コード）
+
+```html
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -29,10 +43,38 @@ h1 {
   text-align: center;
   color: #2c3e50;
   font-size: 1.9em;
-  margin-bottom: 15px;
+  margin-bottom: 12px;
   letter-spacing: 1.5px;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
+
+/* タイトル下のセレクトボックス配置エリア */
+.select-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 18px;
+}
+/* カテゴリー・試験範囲選択用セレクトボックス */
+.level-select {
+  padding: 11px 22px;
+  font-size: 1.05em;
+  font-weight: 600;
+  border: 2px solid #007BFF;
+  border-radius: 25px;
+  background-color: #ffffff;
+  color: #1e293b;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  outline: none;
+  transition: all 0.25s ease;
+  text-align-last: center;
+}
+.level-select:focus {
+  border-color: #00c4b4;
+  box-shadow: 0 4px 20px rgba(0, 196, 180, 0.3);
+}
+
 /* 2枚のカード表示エリア */
 .cards-container {
   display: grid;
@@ -175,24 +217,6 @@ rt {
   gap: 12px;
   margin-bottom: 16px;
 }
-/* カテゴリー選択用セレクトボックス */
-.level-select {
-  padding: 12px 20px;
-  font-size: 1.05em;
-  font-weight: 600;
-  border: 2px solid #007BFF;
-  border-radius: 25px;
-  background-color: #ffffff;
-  color: #1e293b;
-  cursor: pointer;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  outline: none;
-  transition: all 0.25s ease;
-}
-.level-select:focus {
-  border-color: #00c4b4;
-  box-shadow: 0 4px 20px rgba(0, 196, 180, 0.3);
-}
 button {
   padding: 12px 24px;
   font-size: 1.05em;
@@ -322,28 +346,8 @@ footer {
 <div class="container">
   <h1>会話試験：ロールプレイカード</h1>
 
-  <!-- 2枚のカード領域（左：学生、右：教員） -->
-  <div class="cards-container">
-    <!-- 左側：学生用カード -->
-    <div class="role-card" id="studentCard">
-      <div class="card-empty-placeholder">
-        <span class="badge">Thẻ nhập vai học sinh</span>
-        <p>Nhấn nút "Rút thẻ học sinh" bên dưới<br>để hiển thị ngẫu nhiên.</p>
-      </div>
-    </div>
-
-    <!-- 右側：教員用カード -->
-    <div class="role-card" id="teacherCard">
-      <div class="card-empty-placeholder">
-        <span class="badge">教員用ロールカード</span>
-        <p>学生カードが表示された後、<br>「教員カード 表示/非表示」ボタンで表示できます。</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- 操作ボタングループ -->
-  <div class="controls-container">
-        <!-- 試験範囲選択セレクトボックス -->
+  <!-- ★タイトルの直下に配置した試験範囲プルダウン -->
+  <div class="select-container">
     <select class="level-select" id="levelSelect" onchange="onLevelChange()">
       <optgroup label="入門 (Nhập môn)">
         <option value="nhapmon_1_4">入門：第１課から第４課 (Bài 1 - 4)</option>
@@ -367,7 +371,29 @@ footer {
         <option value="socap2_17_18">初級２：第１７課と第１８課 (Bài 17 - 18)</option>
       </optgroup>
     </select>
+  </div>
 
+  <!-- 2枚のカード領域（左：学生、右：教員） -->
+  <div class="cards-container">
+    <!-- 左側：学生用カード -->
+    <div class="role-card" id="studentCard">
+      <div class="card-empty-placeholder">
+        <span class="badge">Thẻ nhập vai học sinh</span>
+        <p>Nhấn nút "Rút thẻ học sinh" bên dưới<br>để hiển thị ngẫu nhiên.</p>
+      </div>
+    </div>
+
+    <!-- 右側：教員用カード -->
+    <div class="role-card" id="teacherCard">
+      <div class="card-empty-placeholder">
+        <span class="badge">教員用ロールカード</span>
+        <p>学生カードが表示された後、<br>「教員カード 表示/非表示」ボタンで表示できます。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 操作ボタングループ -->
+  <div class="controls-container">
     <button class="btn-primary" onclick="drawRandomStudentCard()">🔀 Rút thẻ học sinh</button>
     <button class="btn-teacher" id="toggleTeacherBtn" onclick="toggleTeacherCard()" disabled>👁️ 教員カード 表示 / 非表示</button>
     <button class="btn-reset" onclick="resetAll()">🔄 リセット</button>
@@ -641,3 +667,4 @@ async function toggleRecording() {
 </script>
 </body>
 </html>
+```
