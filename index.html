@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>会話試験：ロールプレイカード生成 Ver0.2</title>
+<title>会話試験：ロールプレイカード生成 Ver0.3</title>
 <style>
 * {
   margin: 0;
@@ -33,7 +33,6 @@ h1 {
   letter-spacing: 1.5px;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
-
 /* 2枚のカード表示エリア */
 .cards-container {
   display: grid;
@@ -44,7 +43,7 @@ h1 {
 .role-card {
   background-color: #ffffff;
   border-radius: 12px;
-  min-height: 200px; /* デフォルトの白枠高さをコンパクトに保持 */
+  min-height: 200px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   border: 2px dashed #cbd5e1;
   display: flex;
@@ -56,7 +55,6 @@ h1 {
   border: 1px solid #94a3b8;
   min-height: auto;
 }
-
 /* 空状態のプレースホルダー */
 .card-empty-placeholder {
   display: flex;
@@ -80,8 +78,7 @@ h1 {
   font-weight: bold;
   margin-bottom: 10px;
 }
-
-/* カードの中身（実際の試験カード風デザイン） */
+/* カードの中身 */
 .card-header-bar {
   background-color: #bdd78e;
   color: #1e3a1e;
@@ -115,7 +112,6 @@ h1 {
   font-weight: 600;
   margin-top: 3px;
 }
-
 /* 指示リスト */
 .instruction-box {
   background-color: #f8fafc;
@@ -144,7 +140,6 @@ h1 {
   background-color: #dcfce7;
   color: #15803d;
 }
-
 .instruction-list {
   list-style: none;
   display: flex;
@@ -163,7 +158,6 @@ h1 {
   font-weight: bold;
   flex-shrink: 0;
 }
-
 /* ルビ設定 */
 ruby {
   ruby-align: center;
@@ -172,7 +166,6 @@ rt {
   font-size: 0.6em;
   color: #475569;
 }
-
 /* 操作ボタングループエリア */
 .controls-container {
   display: flex;
@@ -182,7 +175,6 @@ rt {
   gap: 12px;
   margin-bottom: 16px;
 }
-
 /* カテゴリー選択用セレクトボックス */
 .level-select {
   padding: 12px 20px;
@@ -201,7 +193,6 @@ rt {
   border-color: #00c4b4;
   box-shadow: 0 4px 20px rgba(0, 196, 180, 0.3);
 }
-
 button {
   padding: 12px 24px;
   font-size: 1.05em;
@@ -225,8 +216,6 @@ button:disabled {
   transform: none;
   box-shadow: none;
 }
-
-/* 個別ボタンスタイル */
 .btn-primary {
   background: linear-gradient(45deg, #007BFF, #00c4b4);
   color: white;
@@ -244,7 +233,6 @@ button:disabled {
   color: #64748b;
   border: 1px solid #cbd5e1;
 }
-
 /* タイマー・録音エリア */
 .timer-record-container {
   display: flex;
@@ -268,8 +256,6 @@ button:disabled {
   border-radius: 12px;
   border: 1px solid #e2e8f0;
 }
-
-/* 録音ボタンのスタイル */
 .btn-record {
   background: linear-gradient(45deg, #ef4444, #dc2626);
   color: white;
@@ -283,8 +269,6 @@ button:disabled {
   70% { box-shadow: 0 0 0 12px rgba(239, 68, 68, 0); }
   100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
 }
-
-/* 録音再生エリア */
 #recordingPlaybackArea {
   display: none;
   margin-top: 15px;
@@ -308,7 +292,6 @@ button:disabled {
 .download-link:hover {
   text-decoration: underline;
 }
-
 footer {
   margin-top: auto;
   padding: 16px;
@@ -318,7 +301,6 @@ footer {
   color: #ecf0f1;
   font-size: 0.9em;
 }
-
 @media (max-width: 768px) {
   .cards-container {
     grid-template-columns: 1fr;
@@ -337,14 +319,12 @@ footer {
 </style>
 </head>
 <body>
-
 <div class="container">
   <h1>会話試験：ロールプレイカード</h1>
 
   <!-- 2枚のカード領域（左：学生、右：教員） -->
   <div class="cards-container">
-    
-    <!-- 左側：学生用カード（ベトナム語プレースホルダー） -->
+    <!-- 左側：学生用カード -->
     <div class="role-card" id="studentCard">
       <div class="card-empty-placeholder">
         <span class="badge">Thẻ nhập vai học sinh</span>
@@ -359,16 +339,23 @@ footer {
         <p>学生カードが表示された後、<br>「教員カード 表示/非表示」ボタンで表示できます。</p>
       </div>
     </div>
-
   </div>
 
   <!-- 操作ボタングループ -->
   <div class="controls-container">
-    <!-- カテゴリー選択用リストボタン（入門・初級１・初級２） -->
+    <!-- 試験範囲選択セレクトボックス -->
     <select class="level-select" id="levelSelect" onchange="onLevelChange()">
-      <option value="nhapmon">入門 (Nhập môn)</option>
-      <option value="socap1">初級１ (Sơ cấp 1)</option>
-      <option value="socap2">初級２ (Sơ cấp 2)</option>
+      <optgroup label="入門 (Nhập môn)">
+        <option value="nhapmon_1_4">入門：第１課から第４課 (Bài 1 - 4)</option>
+        <option value="nhapmon_5_8">入門：第５課から第８課 (Bài 5 - 8)</option>
+        <option value="nhapmon_9_12">入門：第９課から第１２課 (Bài 9 - 12)</option>
+        <option value="nhapmon_13_16">入門：第１３課から第１６課 (Bài 13 - 16)</option>
+        <option value="nhapmon_17_18">入門：第１７課と１８課 (Bài 17 - 18)</option>
+      </optgroup>
+      <optgroup label="初級（後日設定）">
+        <option value="socap1">初級１ (Sơ cấp 1)</option>
+        <option value="socap2">初級２ (Sơ cấp 2)</option>
+      </optgroup>
     </select>
 
     <button class="btn-primary" onclick="drawRandomStudentCard()">🔀 Rút thẻ học sinh</button>
@@ -380,8 +367,6 @@ footer {
   <div class="timer-record-container">
     <button class="btn-secondary" onclick="startTimer(90)">⏱️ 90秒タイマー</button>
     <div id="timerDisplay">01:30</div>
-    
-    <!-- 録音・停止一体型ボタン -->
     <button class="btn-record" id="recordBtn" onclick="toggleRecording()">🎙️ 録音開始</button>
   </div>
 
@@ -391,11 +376,10 @@ footer {
     <audio id="recordedAudioPlayer" controls></audio><br>
     <a id="downloadRecordLink" class="download-link" download="roleplay_exam.webm">💾 録音音声（WebM）を保存</a>
   </div>
-
 </div>
 
 <!-- アラート音声ファイル -->
-<audio id="alertSound" src="2869-preview.mp3" preload="auto"></audio>
+<audio id="alertSound" src="https://itm-kaiwa.github.io/IRODORI/2869-preview.mp3" preload="auto"></audio>
 
 <footer>
   © 2026 ITM-Group All rights Reserved.
@@ -419,39 +403,33 @@ let recordTimerInterval = null;
 // ==========================================
 // 1. カード表示制御ロジック
 // ==========================================
-
-// カテゴリー（レベル）切り替え時の処理
 function onLevelChange() {
-  // レベルを切り替えたら、表示中のカードを初期状態に戻す
   resetAll();
 }
 
-// 学生カードをランダムに引く（選択されたレベルで絞り込み）
 function drawRandomStudentCard() {
   if (typeof rolePlayData === "undefined" || rolePlayData.length === 0) {
     alert("data.js が正しく読み込まれていないか、データが空です。");
     return;
   }
 
-  // 選択されたカテゴリー値（nhapmon / socap1 / socap2）
   const selectedLevel = document.getElementById("levelSelect").value;
   const selectedLevelText = document.getElementById("levelSelect").selectedOptions[0].text;
 
-  // 該当するレベルのカードのみを抽出
+  // 選択された試験範囲のカードのみを抽出
   const filteredCards = rolePlayData.filter(card => card.level === selectedLevel);
 
   if (filteredCards.length === 0) {
-    alert(`「${selectedLevelText}」のロールカードはまだ登録されていません。\nChưa có thẻ nhập vai cho cấp độ này.`);
+    alert(`「${selectedLevelText}」のロールカードはまだ登録されていません。\nChưa có thẻ nhập vai cho phạm vi này.`);
     return;
   }
 
-  // 絞り込まれたリストからランダム選択
   const randomIndex = Math.floor(Math.random() * filteredCards.length);
   currentCardData = filteredCards[randomIndex];
 
   const studentEl = document.getElementById("studentCard");
   studentEl.classList.add("has-content");
-  
+
   const vnListHtml = currentCardData.student.instructions_vn
     .map(text => `<li><span class="arrow">↓</span><span>${text}</span></li>`).join("");
 
@@ -467,7 +445,6 @@ function drawRandomStudentCard() {
         <div class="role-title-vn">${currentCardData.student.role_vn}</div>
         <div class="role-title-jp">${currentCardData.student.role_jp_ruby}</div>
       </div>
-      
       <!-- ベトナム語（上） -->
       <div class="instruction-box">
         <span class="section-tag tag-vn">Tiếng Việt</span>
@@ -475,7 +452,6 @@ function drawRandomStudentCard() {
           ${vnListHtml}
         </ul>
       </div>
-
       <!-- 日本語訳（下） -->
       <div class="instruction-box jp-box">
         <span class="section-tag tag-jp">日本語訳</span>
@@ -486,17 +462,12 @@ function drawRandomStudentCard() {
     </div>
   `;
 
-  // 教員カードは非表示状態でリセット
   hideTeacherCard();
-  
-  // 教員カードトグルボタンを有効化
   document.getElementById("toggleTeacherBtn").disabled = false;
 }
 
-// 教員カードの「表示/非表示」切り替え
 function toggleTeacherCard() {
   if (!currentCardData) return;
-
   if (isTeacherCardVisible) {
     hideTeacherCard();
   } else {
@@ -504,7 +475,6 @@ function toggleTeacherCard() {
   }
 }
 
-// 教員カードを表示（日本語のみ）
 function showTeacherCard() {
   const teacherEl = document.getElementById("teacherCard");
   teacherEl.classList.add("has-content");
@@ -520,7 +490,6 @@ function showTeacherCard() {
       <div class="role-title">
         <div class="role-title-jp">${currentCardData.teacher.role_jp_ruby}</div>
       </div>
-
       <!-- 日本語のみ -->
       <div class="instruction-box jp-box" style="flex-grow: 1;">
         <span class="section-tag tag-jp">日本語（教員指示）</span>
@@ -533,7 +502,6 @@ function showTeacherCard() {
   isTeacherCardVisible = true;
 }
 
-// 教員カードを非表示（白の空状態）
 function hideTeacherCard() {
   const teacherEl = document.getElementById("teacherCard");
   teacherEl.classList.remove("has-content");
@@ -546,12 +514,10 @@ function hideTeacherCard() {
   isTeacherCardVisible = false;
 }
 
-// リセット処理
 function resetAll() {
   currentCardData = null;
   isTeacherCardVisible = false;
-  
-  // 左右のカードを初期化
+
   const studentEl = document.getElementById("studentCard");
   studentEl.classList.remove("has-content");
   studentEl.innerHTML = `
@@ -564,11 +530,9 @@ function resetAll() {
   hideTeacherCard();
   document.getElementById("toggleTeacherBtn").disabled = true;
 
-  // タイマー停止とリセット
   clearInterval(timerInterval);
   document.getElementById("timerDisplay").textContent = "01:30";
 
-  // 録音停止
   if (isRecording) {
     toggleRecording();
   }
@@ -581,7 +545,6 @@ function startTimer(seconds) {
   clearInterval(timerInterval);
   const display = document.getElementById("timerDisplay");
   const sound = document.getElementById("alertSound");
-
   const startTime = Date.now();
   const endTime = startTime + (seconds * 1000);
 
@@ -593,7 +556,6 @@ function startTimer(seconds) {
     let timeLeft = Math.max(0, Math.ceil((endTime - now) / 1000));
     let minutes = Math.floor(timeLeft / 60);
     let remainingSeconds = timeLeft % 60;
-
     display.textContent = `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
 
     if (timeLeft <= 0) {
@@ -629,9 +591,9 @@ async function toggleRecording() {
       mediaRecorder.onstop = () => {
         const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
         const audioUrl = URL.createObjectURL(audioBlob);
-
         const player = document.getElementById("recordedAudioPlayer");
         const downloadLink = document.getElementById("downloadRecordLink");
+
         player.src = audioUrl;
         downloadLink.href = audioUrl;
         playbackArea.style.display = "block";
@@ -642,7 +604,6 @@ async function toggleRecording() {
       mediaRecorder.start();
       isRecording = true;
       recordStartTime = Date.now();
-
       recordBtn.classList.add("recording-active");
       recordBtn.innerHTML = `⏹️ 録音停止 (<span id="recSeconds">00:00</span>)`;
 
@@ -663,12 +624,10 @@ async function toggleRecording() {
     }
     isRecording = false;
     clearInterval(recordTimerInterval);
-
     recordBtn.classList.remove("recording-active");
     recordBtn.innerHTML = `🎙️ 録音開始`;
   }
 }
 </script>
-
 </body>
 </html>
