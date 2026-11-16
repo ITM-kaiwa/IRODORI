@@ -1,261 +1,290 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>会話試験：ロールプレイカード生成　Ver0.1a</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .container {
-            max-width: 900px;
-            width: 100%;
-            padding: 20px;
-            margin-top: 20px;
-        }
-
-        h1 {
-            text-align: center;
-            color: #2c3e50;
-            font-size: 2.5em;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
-        }
-
-        .select-container {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-
-        select {
-            padding: 12px 20px;
-            font-size: 1.1em;
-            border: none;
-            border-radius: 25px;
-            background-color: #ffffff;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            width: 300px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        select:focus {
-            outline: none;
-            box-shadow: 0 4px 20px rgba(0, 123, 255, 0.3);
-        }
-
-        button {
-            padding: 12px 30px;
-            font-size: 1.1em;
-            border: none;
-            border-radius: 25px;
-            background: linear-gradient(45deg, #007BFF, #00c4b4);
-            color: white;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease;
-            margin-left: 10px;
-        }
-
-        button:hover {
-            background: linear-gradient(45deg, #0056b3, #009688);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        #topicDisplay {
-            margin-top: 30px;
-            padding: 20px;
-            background-color: #ffffff;
-            border-radius: 15px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            line-height: 1.6;
-            font-size: 1.1em;
-            color: #333;
-            transition: all 0.3s ease;
-        }
-
-        #topicDisplay strong {
-            color: #2c3e50;
-            font-weight: 600;
-        }
-
-        /* タイマーエリアのスタイル（横並び） */
-        .timer-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            margin-top: 25px;
-            margin-bottom: 20px;
-        }
-
-        #timerDisplay {
-            font-size: 2.2em;
-            font-weight: bold;
-            color: #e74c3c;
-            min-width: 120px;
-            text-align: center;
-            background-color: #ffffff;
-            padding: 5px 15px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            margin-left: 10px;
-        }
-
-        footer {
-            margin-top: auto;
-            padding: 20px;
-            width: 100%;
-            text-align: center;
-            background-color: #2c3e50;
-            color: #ecf0f1;
-            font-size: 0.9em;
-        }
-
-        footer a {
-            color: #00c4b4;
-            text-decoration: none;
-        }
-
-        footer a:hover {
-            text-decoration: underline;
-        }
-
-        @media (max-width: 600px) {
-            .container {
-                padding: 15px;
-            }
-
-            h1 {
-                font-size: 1.8em;
-            }
-
-            select, button {
-                width: 100%;
-                margin: 10px 0;
-            }
-
-            .select-container {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .timer-container {
-                flex-direction: column;
-                gap: 5px;
-            }
-
-            #timerDisplay {
-                margin-left: 0;
-                margin-top: 10px;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>会話試験：ロールプレイカード生成 Ver0.1a</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.container {
+  max-width: 900px;
+  width: 100%;
+  padding: 20px;
+  margin-top: 20px;
+}
+h1 {
+  text-align: center;
+  color: #2c3e50;
+  font-size: 2.5em;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+.select-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+select {
+  padding: 12px 20px;
+  font-size: 1.05em;
+  border: none;
+  border-radius: 25px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  min-width: 180px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+select:focus {
+  outline: none;
+  box-shadow: 0 4px 20px rgba(0, 123, 255, 0.3);
+}
+button {
+  padding: 12px 26px;
+  font-size: 1.05em;
+  border: none;
+  border-radius: 25px;
+  background: linear-gradient(45deg, #007BFF, #00c4b4);
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+button:hover {
+  background: linear-gradient(45deg, #0056b3, #009688);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+#topicDisplay {
+  margin-top: 25px;
+  padding: 25px;
+  background-color: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  line-height: 1.8;
+  font-size: 1.15em;
+  color: #333;
+  min-height: 100px;
+  transition: all 0.3s ease;
+}
+#topicDisplay strong {
+  color: #2c3e50;
+  font-weight: 600;
+}
+/* タイマーエリアのスタイル */
+.timer-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin-top: 25px;
+  margin-bottom: 20px;
+}
+#timerDisplay {
+  font-size: 2.2em;
+  font-weight: bold;
+  color: #e74c3c;
+  min-width: 140px;
+  text-align: center;
+  background-color: #ffffff;
+  padding: 6px 20px;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+footer {
+  margin-top: auto;
+  padding: 20px;
+  width: 100%;
+  text-align: center;
+  background-color: #2c3e50;
+  color: #ecf0f1;
+  font-size: 0.9em;
+}
+footer a {
+  color: #00c4b4;
+  text-decoration: none;
+}
+footer a:hover {
+  text-decoration: underline;
+}
+@media (max-width: 600px) {
+  .container {
+    padding: 15px;
+  }
+  h1 {
+    font-size: 1.8em;
+  }
+  select, button {
+    width: 100%;
+    margin: 6px 0;
+  }
+  .select-container {
+    flex-direction: column;
+  }
+  .timer-container {
+    flex-direction: column;
+    gap: 10px;
+  }
+  #timerDisplay {
+    margin-top: 5px;
+  }
+}
+</style>
 </head>
 <body>
-    <div class="container">
-        <h1>ロールプレイ</h1>
-        <div class="select-container">
-            <select id="testSelect">
-                <option value="nhapmon">入門</option>
-                <option value="socap1">初級１</option>
-                <option value="socap2">初級２</option>
-                <option value="custom">カスタム</option>
-              </select>
-            <select id="candoselect">
-                <option value="cando1-14">Can-Do 1-14</option>
-            <button onclick="displayRandomTopic()">開始</button>
-            <button onclick="resetTopic()">リセット</button>
-        </div>
+<div class="container">
+  <h1>ロールプレイ</h1>
+  
+  <div class="select-container">
+    <select id="testSelect">
+      <option value="nhapmon">入門</option>
+      <option value="socap1">初級１</option>
+      <option value="socap2">初級２</option>
+      <option value="custom">カスタム</option>
+    </select>
+    
+    <!-- 修正: 終了タグ </select> を追加 -->
+    <select id="candoselect">
+      <option value="all">すべてのCan-Do</option>
+      <option value="cando1-14">Can-Do 1-14</option>
+    </select>
 
-        <!-- 文章表示欄 -->
-        <div id="topicDisplay"></div>
+    <button onclick="displayRandomTopic()">開始</button>
+    <button onclick="resetTopic()">リセット</button>
+  </div>
 
-        <!-- タイマー機能エリア（文章表示欄の下に配置、横並び構成） -->
-        <div class="timer-container">
-            <button onclick="startTimer(90)">90秒</button>
-            <div id="timerDisplay">00:00</div>
-        </div>
-    </div>
+  <!-- 文章表示欄 -->
+  <div id="topicDisplay">「開始」ボタンを押すとロールプレイのトピックが表示されます。</div>
 
-    <!-- アラート音用の音声ファイル（インターネット上のフリー音源） -->
-    <audio id="alertSound" src="/2869-preview.mp3"></audio>
+  <!-- タイマー機能エリア -->
+  <div class="timer-container">
+    <button onclick="startTimer(90)">90秒タイマー</button>
+    <div id="timerDisplay">00:00</div>
+  </div>
+</div>
 
-    <footer>
-        © 2026 ITM-Group All rights Reserved.
-    </footer>
+<!-- 修正: Markdown形式のURLを正規のURLに修正 -->
+<audio id="alertSound" src="https://itm-kaiwa.github.io/2869-preview.mp3" preload="auto"></audio>
 
- <script>
-        let timerInterval;
+<footer>
+  © 2026 ITM-Group All rights Reserved.
+</footer>
 
-        function displayRandomTopic() {
-            const testSelect = document.getElementById("testSelect").value;
-            const topicList = topics[testSelect];
-            if (!topicList || topicList.length === 0) {
-                document.getElementById("topicDisplay").innerHTML = "このテストのトピックはまだありません。";
-                return;
-            }
-            const randomIndex = Math.floor(Math.random() * topicList.length);
-            const topic = topicList[randomIndex];
-            document.getElementById("topicDisplay").innerHTML = `<strong>Tiếng việt:</strong> ${topic.vn}<br><strong>Tiếng nhật:</strong> ${topic.jp}`;
-        }
+<script>
+// サンプルトピックデータ（必要に応じて編集・追加してください）
+const topics = {
+  nhapmon: [
+    {
+      vn: "Bạn gặp giáo viên lần đầu tiên. Hãy chào hỏi và tự giới thiệu bản thân.",
+      jp: "先生に初めて会いました。挨拶をして自己紹介をしてください。"
+    },
+    {
+      vn: "Hỏi giá của món đồ trong cửa hàng tiện lợi.",
+      jp: "コンビニで商品の値段を尋ねてください。"
+    }
+  ],
+  socap1: [
+    {
+      vn: "Rủ đồng nghiệp cùng đi ăn trưa vào ngày mai.",
+      jp: "同僚を明日のランチに誘ってください。"
+    },
+    {
+      vn: "Hỏi đường đến nhà ga gần nhất từ vị trí hiện tại.",
+      jp: "現在地から一番近い駅への行き方を尋ねてください。"
+    }
+  ],
+  socap2: [
+    {
+      vn: "Xin phép cấp trên nghỉ một buổi vì bị cảm.",
+      jp: "風邪をひいたため、上司に休みを取りたい旨を伝えて許可をもらってください。"
+    },
+    {
+      vn: "Giải thích lý do đi làm muộn do tàu bị trễ.",
+      jp: "電車の遅延で遅刻した理由を説明してください。"
+    }
+  ],
+  custom: [
+    {
+      vn: "Thảo luận về kế hoạch tổ chức sự kiện tuần tới.",
+      jp: "来週のイベント開催計画について話し合ってください。"
+    }
+  ]
+};
 
-        function resetTopic() {
-            document.getElementById("topicDisplay").innerHTML = "";
-            clearInterval(timerInterval);
-            document.getElementById('timerDisplay').textContent = "00:00";
-        }
+let timerInterval;
+
+function displayRandomTopic() {
+  const testSelect = document.getElementById("testSelect").value;
+  const topicList = topics[testSelect];
+  
+  if (!topicList || topicList.length === 0) {
+    document.getElementById("topicDisplay").innerHTML = "このテストのトピックはまだ登録されていません。";
+    return;
+  }
+  
+  const randomIndex = Math.floor(Math.random() * topicList.length);
+  const topic = topicList[randomIndex];
+  document.getElementById("topicDisplay").innerHTML = `
+    <strong>Tiếng Việt:</strong> ${topic.vn}<br><br>
+    <strong>Tiếng Nhật:</strong> ${topic.jp}
+  `;
+}
+
+function resetTopic() {
+  document.getElementById("topicDisplay").innerHTML = "「開始」ボタンを押すとロールプレイのトピックが表示されます。";
+  clearInterval(timerInterval);
+  document.getElementById('timerDisplay').textContent = "00:00";
+}
 
 // タイマー制御関数
 function startTimer(seconds) {
-    clearInterval(timerInterval);
-    const display = document.getElementById('timerDisplay');
-    const sound = document.getElementById('alertSound');
+  clearInterval(timerInterval);
+  const display = document.getElementById('timerDisplay');
+  const sound = document.getElementById('alertSound');
+  
+  const startTime = Date.now();
+  const endTime = startTime + (seconds * 1000);
+  
+  updateTimer();
+  timerInterval = setInterval(updateTimer, 200);
+
+  function updateTimer() {
+    const now = Date.now();
+    let timeLeft = Math.max(0, Math.ceil((endTime - now) / 1000));
+    let minutes = Math.floor(timeLeft / 60);
+    let remainingSeconds = timeLeft % 60;
     
-    // タイマーが終了すべき「未来の時刻」を先に計算して保持しておく
-    const startTime = Date.now();
-    const endTime = startTime + (seconds * 1000);
-
-    // 初回表示をすぐに行う
-    updateTimer();
-
-    timerInterval = setInterval(updateTimer, 200); // 処理の遅れを考慮し、少し細かめにチェック
-
-    function updateTimer() {
-        const now = Date.now();
-        let timeLeft = Math.max(0, Math.ceil((endTime - now) / 1000));
-
-        let minutes = Math.floor(timeLeft / 60);
-        let remainingSeconds = timeLeft % 60;
-        display.textContent = `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
-                        
-        if (timeLeft <= 0) {
-            clearInterval(timerInterval);
-            if (sound) { sound.play().catch(e => console.warn(e)); } // 音を鳴らす
-            setTimeout(() => {
-                alert("時間です！");
-            }, 100);
-        }
+    display.textContent = `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
+    
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      if (sound) {
+        sound.currentTime = 0;
+        sound.play().catch(e => console.warn("音声再生エラー:", e));
+      }
+      setTimeout(() => {
+        alert("時間です！");
+      }, 100);
     }
+  }
 }
-    
-    </script>
+</script>
 </body>
 </html>
