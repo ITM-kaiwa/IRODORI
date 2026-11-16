@@ -34,7 +34,7 @@ h1 {
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-/* 2枚のカード表示エリア（高さを抑えてボタンを見えるように改善） */
+/* 2枚のカード表示エリア */
 .cards-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -44,7 +44,7 @@ h1 {
 .role-card {
   background-color: #ffffff;
   border-radius: 12px;
-  min-height: 200px; /* デフォルトの高さを大幅にコンパクト化 */
+  min-height: 200px; /* デフォルトの白枠高さをコンパクトに保持 */
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   border: 2px dashed #cbd5e1;
   display: flex;
@@ -54,7 +54,7 @@ h1 {
 }
 .role-card.has-content {
   border: 1px solid #94a3b8;
-  min-height: auto; /* コンテンツ描画時は自動でフィット */
+  min-height: auto;
 }
 
 /* 空状態のプレースホルダー */
@@ -173,7 +173,7 @@ rt {
   color: #475569;
 }
 
-/* ボタングループエリア */
+/* 操作ボタングループエリア */
 .controls-container {
   display: flex;
   flex-wrap: wrap;
@@ -182,6 +182,26 @@ rt {
   gap: 12px;
   margin-bottom: 16px;
 }
+
+/* カテゴリー選択用セレクトボックス */
+.level-select {
+  padding: 12px 20px;
+  font-size: 1.05em;
+  font-weight: 600;
+  border: 2px solid #007BFF;
+  border-radius: 25px;
+  background-color: #ffffff;
+  color: #1e293b;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  outline: none;
+  transition: all 0.25s ease;
+}
+.level-select:focus {
+  border-color: #00c4b4;
+  box-shadow: 0 4px 20px rgba(0, 196, 180, 0.3);
+}
+
 button {
   padding: 12px 24px;
   font-size: 1.05em;
@@ -306,7 +326,7 @@ footer {
   .role-card {
     min-height: 160px;
   }
-  button {
+  .level-select, button {
     width: 100%;
     justify-content: center;
   }
@@ -324,7 +344,7 @@ footer {
   <!-- 2枚のカード領域（左：学生、右：教員） -->
   <div class="cards-container">
     
-    <!-- 左側：学生用カード（ベトナム語のみの案内文） -->
+    <!-- 左側：学生用カード（ベトナム語プレースホルダー） -->
     <div class="role-card" id="studentCard">
       <div class="card-empty-placeholder">
         <span class="badge">Thẻ nhập vai học sinh</span>
@@ -342,8 +362,15 @@ footer {
 
   </div>
 
-  <!-- 操作ボタングループ（学生カードボタンをベトナム語に変更） -->
+  <!-- 操作ボタングループ -->
   <div class="controls-container">
+    <!-- カテゴリー選択用リストボタン（入門・初級１・初級２） -->
+    <select class="level-select" id="levelSelect" onchange="onLevelChange()">
+      <option value="nhapmon">入門 (Nhập môn)</option>
+      <option value="socap1">初級１ (Sơ cấp 1)</option>
+      <option value="socap2">初級２ (Sơ cấp 2)</option>
+    </select>
+
     <button class="btn-primary" onclick="drawRandomStudentCard()">🔀 Rút thẻ học sinh</button>
     <button class="btn-teacher" id="toggleTeacherBtn" onclick="toggleTeacherCard()" disabled>👁️ 教員カード 表示 / 非表示</button>
     <button class="btn-reset" onclick="resetAll()">🔄 リセット</button>
@@ -393,15 +420,34 @@ let recordTimerInterval = null;
 // 1. カード表示制御ロジック
 // ==========================================
 
-// 学生カードをランダムに引く
+// カテゴリー（レベル）切り替え時の処理
+function onLevelChange() {
+  // レベルを切り替えたら、表示中のカードを初期状態に戻す
+  resetAll();
+}
+
+// 学生カードをランダムに引く（選択されたレベルで絞り込み）
 function drawRandomStudentCard() {
   if (typeof rolePlayData === "undefined" || rolePlayData.length === 0) {
     alert("data.js が正しく読み込まれていないか、データが空です。");
     return;
   }
 
-  const randomIndex = Math.floor(Math.random() * rolePlayData.length);
-  currentCardData = rolePlayData[randomIndex];
+  // 選択されたカテゴリー値（nhapmon / socap1 / socap2）
+  const selectedLevel = document.getElementById("levelSelect").value;
+  const selectedLevelText = document.getElementById("levelSelect").selectedOptions[0].text;
+
+  // 該当するレベルのカードのみを抽出
+  const filteredCards = rolePlayData.filter(card => card.level === selectedLevel);
+
+  if (filteredCards.length === 0) {
+    alert(`「${selectedLevelText}」のロールカードはまだ登録されていません。\nChưa có thẻ nhập vai cho cấp độ này.`);
+    return;
+  }
+
+  // 絞り込まれたリストからランダム選択
+  const randomIndex = Math.floor(Math.random() * filteredCards.length);
+  currentCardData = filteredCards[randomIndex];
 
   const studentEl = document.getElementById("studentCard");
   studentEl.classList.add("has-content");
@@ -505,7 +551,7 @@ function resetAll() {
   currentCardData = null;
   isTeacherCardVisible = false;
   
-  // 左右のカードを初期化（学生側はベトナム語プレースホルダー）
+  // 左右のカードを初期化
   const studentEl = document.getElementById("studentCard");
   studentEl.classList.remove("has-content");
   studentEl.innerHTML = `
@@ -571,7 +617,6 @@ async function toggleRecording() {
   const playbackArea = document.getElementById("recordingPlaybackArea");
 
   if (!isRecording) {
-    // 録音開始
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       mediaRecorder = new MediaRecorder(stream);
@@ -613,7 +658,6 @@ async function toggleRecording() {
       alert("マイクの使用が許可されていないか、対応していないブラウザです:\n" + err.message);
     }
   } else {
-    // 録音停止
     if (mediaRecorder && mediaRecorder.state !== "inactive") {
       mediaRecorder.stop();
     }
