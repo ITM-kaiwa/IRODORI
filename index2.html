@@ -677,7 +677,11 @@ footer {
       <span>📊 会話試験 評価入力</span>
       <span class="eval-total-badge">合計: <span id="evalTotalScore">0</span> / 10点</span>
     </div>
-
+<!-- ★追加：クラス名入力欄 -->
+    <div class="eval-field">
+      <label for="evalClassName">クラス名（必須）半角英数字</label>
+      <input type="text" id="evalClassName" class="eval-input" placeholder="例：26M05">
+    </div>
     <div class="eval-field">
       <label for="evalStudentName">学生氏名（必須）</label>
       <input type="text" id="evalStudentName" class="eval-input" placeholder="例：グエン・バン・A">
@@ -946,16 +950,22 @@ function updateTotalScore() {
 }
 
 async function submitEvaluation() {
+  const className = document.getElementById("evalClassName").value.trim();
   const studentName = document.getElementById("evalStudentName").value.trim();
+
+  if (!className) {
+    alert("クラス名を入力してください。");
+    return;
+  }
   if (!studentName) {
     alert("学生氏名を入力してください。");
     return;
   }
 
-  // 重複送信チェック
-  const isDuplicate = evalHistory.some(item => item.name === studentName);
+  // 重複送信チェック（同じクラス・同じ学生名が履歴にあるか確認）
+  const isDuplicate = evalHistory.some(item => item.className === className && item.name === studentName);
   if (isDuplicate) {
-    const proceed = confirm(`「${studentName}」さんはすでに送信履歴にあります。\n重複して送信してもよろしいですか？`);
+    const proceed = confirm(`「${className}：${studentName}」さんはすでに送信履歴にあります。\n重複して送信してもよろしいですか？`);
     if (!proceed) return;
   }
 
@@ -973,6 +983,7 @@ async function submitEvaluation() {
   const payload = {
     course: courseText,
     cardTitle: cardTitle,
+    className: className,
     studentName: studentName,
     cando: cando,
     interaction: interaction,
@@ -999,6 +1010,7 @@ async function submitEvaluation() {
 
     evalHistory.unshift({
       time: timeStr,
+      className: className,
       name: studentName,
       card: cardTitle,
       total: totalScore
@@ -1006,9 +1018,9 @@ async function submitEvaluation() {
     sessionStorage.setItem("roleplayEvalHistory", JSON.stringify(evalHistory));
     renderEvalHistory();
 
-    alert(`「${studentName}」さんの評価（${totalScore}点）を記録しました！`);
+    alert(`「${className}：${studentName}」さんの評価（${totalScore}点）を記録しました！`);
 
-    // 次の学生のためにフォームをリセット
+    // 次の学生のためにフォームをリセット（※クラス名は連続入力のため残す）
     document.getElementById("evalStudentName").value = "";
     document.getElementById("scoreCando").value = "0";
     document.getElementById("scoreInteraction").value = "0";
@@ -1041,7 +1053,7 @@ function renderEvalHistory() {
   list.innerHTML = evalHistory.map(item => `
     <li class="history-item">
       <div class="history-info">
-        <span class="history-name">${escapeHtml(item.name)}</span>
+        <span class="history-name">${item.className ? `[${escapeHtml(item.className)}] ` : ""}${escapeHtml(item.name)}</span>
         <span class="history-meta">${item.time} ・ ${escapeHtml(item.card)}</span>
       </div>
       <span class="history-score">${item.total} / 10点</span>
