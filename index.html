@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>会話試験：ロールプレイカード生成 Ver0.5a</title>
+<title>会話試験：ロールプレイカード生成 Ver 0.6</title>
 <style>
 * {
   margin: 0;
@@ -41,7 +41,6 @@ h1 {
   align-items: center;
   margin-bottom: 18px;
 }
-/* カテゴリー・試験範囲選択用セレクトボックス */
 .level-select {
   padding: 11px 22px;
   font-size: 1.05em;
@@ -83,7 +82,6 @@ h1 {
   border: 1px solid #94a3b8;
   min-height: auto;
 }
-/* 空状態のプレースホルダー */
 .card-empty-placeholder {
   display: flex;
   flex-direction: column;
@@ -106,6 +104,7 @@ h1 {
   font-weight: bold;
   margin-bottom: 10px;
 }
+
 /* カードの中身 */
 .card-header-bar {
   background-color: #bdd78e;
@@ -140,7 +139,6 @@ h1 {
   font-weight: 600;
   margin-top: 3px;
 }
-/* 指示リスト */
 .instruction-box {
   background-color: #f8fafc;
   border-radius: 10px;
@@ -186,7 +184,6 @@ h1 {
   font-weight: bold;
   flex-shrink: 0;
 }
-/* ルビ設定 */
 ruby {
   ruby-align: center;
 }
@@ -194,6 +191,12 @@ rt {
   font-size: 0.6em;
   color: #475569;
 }
+
+/* ★学生カードの日本語非表示用スタイル */
+#studentCard.hide-jp .student-jp-content {
+  display: none !important;
+}
+
 /* 操作ボタングループエリア */
 .controls-container {
   display: flex;
@@ -203,6 +206,35 @@ rt {
   gap: 12px;
   margin-bottom: 16px;
 }
+
+/* ★日本語表示切替チェックボックス */
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.0em;
+  font-weight: 600;
+  color: #334155;
+  background-color: #ffffff;
+  padding: 10px 18px;
+  border-radius: 25px;
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.25s ease;
+}
+.checkbox-label:hover {
+  background-color: #f8fafc;
+  border-color: #94a3b8;
+}
+.checkbox-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #007BFF;
+  cursor: pointer;
+}
+
 button {
   padding: 12px 24px;
   font-size: 1.05em;
@@ -243,6 +275,7 @@ button:disabled {
   color: #64748b;
   border: 1px solid #cbd5e1;
 }
+
 /* タイマー・録音エリア */
 .timer-record-container {
   display: flex;
@@ -318,12 +351,15 @@ footer {
   .role-card {
     min-height: 160px;
   }
-  .level-select, button {
+  .level-select, button, .checkbox-label {
     width: 100%;
     justify-content: center;
   }
   .timer-record-container {
     flex-direction: column;
+  }
+  .select-container {
+    width: 100%;
   }
 }
 </style>
@@ -332,7 +368,7 @@ footer {
 <div class="container">
   <h1>会話試験：ロールプレイカード</h1>
 
-  <!-- ★タイトルの直下に配置した試験範囲プルダウン -->
+  <!-- タイトルの直下に配置した試験範囲プルダウン -->
   <div class="select-container">
     <select class="level-select" id="levelSelect" onchange="onLevelChange()">
       <optgroup label="入門 (Nhập môn)">
@@ -361,7 +397,6 @@ footer {
 
   <!-- 2枚のカード領域（左：学生、右：教員） -->
   <div class="cards-container">
-    <!-- 左側：学生用カード -->
     <div class="role-card" id="studentCard">
       <div class="card-empty-placeholder">
         <span class="badge">Thẻ nhập vai học sinh</span>
@@ -369,7 +404,6 @@ footer {
       </div>
     </div>
 
-    <!-- 右側：教員用カード -->
     <div class="role-card" id="teacherCard">
       <div class="card-empty-placeholder">
         <span class="badge">教員用ロールカード</span>
@@ -380,6 +414,12 @@ footer {
 
   <!-- 操作ボタングループ -->
   <div class="controls-container">
+    <!-- ★ボタンの左に配置したチェックボックス（デフォルト：未チェック） -->
+    <label class="checkbox-label" for="showStudentJpCheck">
+      <input type="checkbox" id="showStudentJpCheck" onchange="onStudentJpCheckChange()">
+      <span>日本語表示</span>
+    </label>
+
     <button class="btn-primary" onclick="drawRandomStudentCard()">🔀 Rút thẻ học sinh</button>
     <button class="btn-teacher" id="toggleTeacherBtn" onclick="toggleTeacherCard()" disabled>👁️ 教員カード 表示 / 非表示</button>
     <button class="btn-reset" onclick="resetAll()">🔄 リセット</button>
@@ -403,8 +443,9 @@ footer {
 <!-- アラート音声ファイル -->
 <audio id="alertSound" src="https://itm-kaiwa.github.io/IRODORI/2869-preview.mp3" preload="auto"></audio>
 
+<!-- フッター（Ver 0.5） -->
 <footer>
-  <span style="margin-right: 15px; opacity: 0.9;">Ver 0.5</span>© 2026 ITM-Group All rights Reserved.
+  <span style="margin-right: 15px; opacity: 0.9;">Ver 0.6</span>© 2026 ITM-Group All rights Reserved.
 </footer>
 
 <!-- 外部データファイル読み込み -->
@@ -415,18 +456,25 @@ let currentCardData = null;
 let isTeacherCardVisible = false;
 let timerInterval = null;
 
-// 録音機能用変数
 let mediaRecorder = null;
 let audioChunks = [];
 let isRecording = false;
 let recordStartTime = 0;
 let recordTimerInterval = null;
 
-// ==========================================
-// 1. カード表示制御ロジック
-// ==========================================
 function onLevelChange() {
   resetAll();
+}
+
+// ★チェックボックスの切り替え時に即座に反映
+function onStudentJpCheckChange() {
+  const isChecked = document.getElementById("showStudentJpCheck").checked;
+  const studentEl = document.getElementById("studentCard");
+  if (isChecked) {
+    studentEl.classList.remove("hide-jp");
+  } else {
+    studentEl.classList.add("hide-jp");
+  }
 }
 
 function drawRandomStudentCard() {
@@ -438,7 +486,6 @@ function drawRandomStudentCard() {
   const selectedLevel = document.getElementById("levelSelect").value;
   const selectedLevelText = document.getElementById("levelSelect").selectedOptions[0].text;
 
-  // 選択された試験範囲のカードのみを抽出
   const filteredCards = rolePlayData.filter(card => card.level === selectedLevel);
 
   if (filteredCards.length === 0) {
@@ -465,7 +512,7 @@ function drawRandomStudentCard() {
     <div class="card-body">
       <div class="role-title">
         <div class="role-title-vn">${currentCardData.student.role_vn}</div>
-        <div class="role-title-jp">${currentCardData.student.role_jp_ruby}</div>
+        <div class="role-title-jp student-jp-content">${currentCardData.student.role_jp_ruby}</div>
       </div>
       <!-- ベトナム語（上） -->
       <div class="instruction-box">
@@ -474,8 +521,8 @@ function drawRandomStudentCard() {
           ${vnListHtml}
         </ul>
       </div>
-      <!-- 日本語訳（下） -->
-      <div class="instruction-box jp-box">
+      <!-- 日本語訳（下：チェックが入っている時のみ表示） -->
+      <div class="instruction-box jp-box student-jp-content">
         <span class="section-tag tag-jp">日本語訳</span>
         <ul class="instruction-list">
           ${jpListHtml}
@@ -483,6 +530,9 @@ function drawRandomStudentCard() {
       </div>
     </div>
   `;
+
+  // チェック状態を反映（未チェックなら hide-jp クラスを付与）
+  onStudentJpCheckChange();
 
   hideTeacherCard();
   document.getElementById("toggleTeacherBtn").disabled = false;
@@ -512,7 +562,6 @@ function showTeacherCard() {
       <div class="role-title">
         <div class="role-title-jp">${currentCardData.teacher.role_jp_ruby}</div>
       </div>
-      <!-- 日本語のみ -->
       <div class="instruction-box jp-box" style="flex-grow: 1;">
         <span class="section-tag tag-jp">日本語（教員指示）</span>
         <ul class="instruction-list">
@@ -560,9 +609,6 @@ function resetAll() {
   }
 }
 
-// ==========================================
-// 2. タイマー機能（90秒カウントダウン）
-// ==========================================
 function startTimer(seconds) {
   clearInterval(timerInterval);
   const display = document.getElementById("timerDisplay");
@@ -593,9 +639,6 @@ function startTimer(seconds) {
   }
 }
 
-// ==========================================
-// 3. 録音・停止一体型ボタン（MediaRecorder）
-// ==========================================
 async function toggleRecording() {
   const recordBtn = document.getElementById("recordBtn");
   const playbackArea = document.getElementById("recordingPlaybackArea");
