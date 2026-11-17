@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>教員用ロールプレイカード (スマホ版) Ver 0.9</title>
+<title>教員用ロールプレイカード (スマホ版) Ver 1.3a</title>
 <style>
 * {
   margin: 0;
@@ -27,6 +27,62 @@ body {
   display: flex;
   flex-direction: column;
   gap: 14px;
+}
+
+/* 画面右端の丸型ダウンロードボタン（index.htmlより移植） */
+.btn-download-circle {
+  position: fixed;
+  top: 20px;
+  right: 25px;
+  z-index: 1000;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #107c41 0%, #15803d 100%);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(16, 124, 65, 0.35);
+  text-decoration: none;
+  transition: all 0.25s ease;
+  cursor: pointer;
+}
+.btn-download-circle:hover {
+  transform: scale(1.1) translateY(-2px);
+  box-shadow: 0 6px 18px rgba(16, 124, 65, 0.45);
+  background: linear-gradient(135deg, #15803d 0%, #166534 100%);
+}
+.btn-download-circle:active {
+  transform: scale(0.96);
+}
+.btn-download-circle .download-icon {
+  width: 24px;
+  height: 24px;
+  stroke: #ffffff;
+}
+/* ホバーツールチップ */
+.download-tooltip {
+  position: absolute;
+  bottom: -32px;
+  right: 50%;
+  transform: translateX(50%);
+  background: rgba(30, 41, 59, 0.9);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s, visibility 0.2s;
+  pointer-events: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+.btn-download-circle:hover .download-tooltip {
+  opacity: 1;
+  visibility: visible;
 }
 
 /* ヘッダーエリア */
@@ -414,7 +470,8 @@ button:active {
   opacity: 0.6;
   cursor: not-allowed;
 }
-/* ★記録したシートをみるボタン（リンク） */
+
+/* 記録したシートをみるボタン（リンク） */
 .btn-view-sheet {
   display: flex;
   align-items: center;
@@ -436,6 +493,7 @@ button:active {
   transform: scale(0.97);
   background-color: #d1fae5;
 }
+
 /* 送信履歴エリア */
 .history-box {
   background-color: #ffffff;
@@ -514,18 +572,35 @@ footer {
   color: #64748b;
   font-size: 0.85em;
 }
+
+/* スマホ画面向け調整（丸型ボタンの重なり防止） */
+@media (max-width: 768px) {
+  .btn-download-circle {
+    top: 12px;
+    right: 12px;
+    width: 40px;
+    height: 40px;
+  }
+  .btn-download-circle .download-icon {
+    width: 20px;
+    height: 20px;
+  }
+  .download-tooltip {
+    display: none;
+  }
+}
 </style>
 </head>
 <body>
   <!-- 画面右端の丸型ダウンロードボタン（評価シートExcelダウンロード） -->
-<a href="IRODORI_ROLEPLAY_EVALUATION.xlsx" download="IRODORI_ROLEPLAY_EVALUATION.xlsx" class="btn-download-circle" title="評価シート（IRODORI_ROLEPLAY_EVALUATION.xlsx）をダウンロード">
-  <svg class="download-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-    <polyline points="7 10 12 15 17 10"></polyline>
-    <line x1="12" y1="15" x2="12" y2="3"></line>
-  </svg>
-  <span class="download-tooltip">評価シートDL</span>
-</a>
+  <a href="IRODORI_ROLEPLAY_EVALUATION.xlsx" download="IRODORI_ROLEPLAY_EVALUATION.xlsx" class="btn-download-circle" title="評価シート（IRODORI_ROLEPLAY_EVALUATION.xlsx）をダウンロード">
+    <svg class="download-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+      <polyline points="7 10 12 15 17 10"></polyline>
+      <line x1="12" y1="15" x2="12" y2="3"></line>
+    </svg>
+    <span class="download-tooltip">評価シートDL</span>
+  </a>
 
 <div class="container">
   <!-- ヘッダー -->
@@ -651,7 +726,7 @@ footer {
         <label for="scorePronunciation">発音等 (1点)</label>
         <select id="scorePronunciation" class="eval-select" onchange="updateTotalScore()">
           <option value="1">1点</option>
-           <option value="0.5">0.5点</option>
+          <option value="0.5">0.5点</option>
           <option value="0" selected>0点</option>
         </select>
       </div>
@@ -665,7 +740,8 @@ footer {
     <button type="button" class="btn-submit-eval" id="submitEvalBtn" onclick="submitEvaluation()">
       📤 スプレッドシートに記録する
     </button>
-    <!-- ★追加：記録したシートをみるリンクボタン -->
+
+    <!-- 記録したシートをみるリンクボタン -->
     <a href="https://docs.google.com/spreadsheets/d/1OowT2FPYdgqZrNi7kzXRJ8R6pOgcQ3zmbXuBnwuuAZo/edit?usp=sharing"
        target="_blank"
        rel="noopener noreferrer"
@@ -688,7 +764,7 @@ footer {
 
   <!-- フッター -->
   <footer>
-    Ver 1.1a &nbsp; © 2026 ITM-Group All rights Reserved.
+    Ver 1.3a &nbsp; © 2026 ITM-Group All rights Reserved.
   </footer>
 </div>
 
@@ -698,7 +774,6 @@ footer {
 <script>
 // ============================================================
 // ★Google Apps Script（GAS）ウェブアプリURLの設定
-// デプロイして発行された「https://script.google.com/macros/s/〇〇〇/exec」に書き換えてください
 // ============================================================
 const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwYj6dQG4M_o_travgT-BkUKHASvFHZf6K49igNwKKdCqS9bpRMcTpu9q5os4U73sxI/exec";
 
