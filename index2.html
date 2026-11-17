@@ -414,7 +414,28 @@ button:active {
   opacity: 0.6;
   cursor: not-allowed;
 }
-
+/* ★記録したシートをみるボタン（リンク） */
+.btn-view-sheet {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 11px 16px;
+  font-size: 0.95em;
+  font-weight: 600;
+  color: #065f46;
+  background-color: #ecfdf5;
+  border: 2px solid #10b981;
+  border-radius: 20px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.btn-view-sheet:active {
+  transform: scale(0.97);
+  background-color: #d1fae5;
+}
 /* 送信履歴エリア */
 .history-box {
   background-color: #ffffff;
@@ -634,6 +655,13 @@ footer {
     <button type="button" class="btn-submit-eval" id="submitEvalBtn" onclick="submitEvaluation()">
       📤 スプレッドシートに記録する
     </button>
+    <!-- ★追加：記録したシートをみるリンクボタン -->
+    <a href="https://docs.google.com/spreadsheets/d/1OowT2FPYdgqZrNi7kzXRJ8R6pOgcQ3zmbXuBnwuuAZo/edit?usp=sharing"
+       target="_blank"
+       rel="noopener noreferrer"
+       class="btn-view-sheet">
+      📄 記録したシートをみる
+    </a>
   </div>
 
   <!-- 送信履歴一時表示エリア -->
@@ -650,7 +678,7 @@ footer {
 
   <!-- フッター -->
   <footer>
-    Ver 1.0a &nbsp; © 2026 ITM-Group All rights Reserved.
+    Ver 1.1a &nbsp; © 2026 ITM-Group All rights Reserved.
   </footer>
 </div>
 
