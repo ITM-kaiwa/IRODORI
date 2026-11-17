@@ -621,7 +621,6 @@ function toggleStudentAccordion() {
 // ★「評価する」ボタン処理
 // ==========================================
 function openEvaluationSheet() {
-  // A1:氏名、B1:Can-doの達成（３点） 、C1:やり取り（３点）、D1:正確さ（２点）、E1:流暢さ（１点）、F1:発音等（１点）、G1:コメント
   const headerData = [
     "氏名",
     "Can-doの達成（３点） ",
@@ -632,17 +631,27 @@ function openEvaluationSheet() {
     "コメント"
   ].join("\t");
 
-  // クリップボードにヘッダー文字列を自動コピー
   if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(headerData).catch(err => {
       console.warn("クリップボード書き込みエラー:", err);
     });
   }
 
-  // 別ウィンドウでGoogleスプレッドシートを開く
-  window.open(EVALUATION_SHEET_URL, "_blank");
-}
+  // Android端末かどうかを判定
+  const isAndroid = /Android/i.test(navigator.userAgent);
 
+  if (isAndroid) {
+    // https:// を取り除いてAndroidのIntentスキームでスプレッドシートアプリを直接起動
+    const cleanUrl = EVALUATION_SHEET_URL.replace(/^https?:\/\//, "");
+    const intentUrl = `intent://${cleanUrl}#Intent;scheme=https;package=com.google.android.apps.docs.editors.sheets;end`;
+    window.location.href = intentUrl;
+  } else {
+    // PCやiOSは通常通り別ウィンドウで開く
+    window.open(EVALUATION_SHEET_URL, "_blank");
+  }
+}
+  
+ 
 // ==========================================
 // タイマー機能（90秒）
 // ==========================================
