@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>教員用ロールプレイカード (スマホ版) Ver 0.7</title>
+<title>教員用ロールプレイカード (スマホ版) Ver 0.8</title>
 <style>
 * {
   margin: 0;
@@ -270,7 +270,7 @@ rt {
   margin-bottom: 4px;
 }
 
-/* タイマー・録音エリア */
+/* タイマー・録音・評価エリア */
 .timer-record-box {
   background-color: #ffffff;
   border-radius: 16px;
@@ -331,6 +331,16 @@ button:active {
   0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
   70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
   100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+/* ★「評価する」ボタン（Googleスプレッドシート風グリーン） */
+.btn-evaluate {
+  background: linear-gradient(45deg, #10b981, #059669);
+  color: white;
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 1.0em;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
 }
 
 /* 録音再生エリア */
@@ -415,13 +425,18 @@ footer {
     <div class="accordion-content" id="studentAccordionContent"></div>
   </div>
 
-  <!-- タイマー ＆ 録音エリア -->
+  <!-- タイマー ＆ 録音 ＆ 評価エリア -->
   <div class="timer-record-box">
     <div class="timer-row">
       <button class="btn-timer" onclick="startTimer(90)">⏱️ 90秒タイマー</button>
       <div id="timerDisplay">01:30</div>
     </div>
+    
+    <!-- 録音ボタン -->
     <button class="btn-record" id="recordBtn" onclick="toggleRecording()">🎙️ 録音開始</button>
+
+    <!-- ★録音ボタンの直下に配置した「評価する」ボタン -->
+    <button class="btn-evaluate" onclick="openEvaluationSheet()">📊 評価する (Googleスプレッドシート)</button>
 
     <!-- 録音再生エリア -->
     <div id="recordingPlaybackArea">
@@ -436,7 +451,7 @@ footer {
 
   <!-- フッター -->
   <footer>
-    Ver 0.7 &nbsp; © 2026 ITM-Group All rights Reserved.
+    Ver 0.8 &nbsp; © 2026 ITM-Group All rights Reserved.
   </footer>
 </div>
 
@@ -444,6 +459,13 @@ footer {
 <script src="data.js"></script>
 
 <script>
+// ============================================================
+// ★評価用スプレッドシートの設定
+// あらかじめ作成したスプレッドシートやテンプレートURLがある場合は
+// 下のURLをそのスプレッドシートのURL（または末尾を /copy にしたもの）に差し替えてください。
+// ============================================================
+let EVALUATION_SHEET_URL = "https://sheets.new";
+
 let currentCourseCards = [];
 let currentCardData = null;
 let timerInterval = null;
@@ -460,7 +482,7 @@ window.addEventListener("DOMContentLoaded", () => {
   onCourseChange();
 });
 
-// コース切り替え時：該当するカードを抽出して番号プルダウンを再構築
+// コース切り替え時
 function onCourseChange() {
   if (typeof rolePlayData === "undefined" || rolePlayData.length === 0) {
     alert("data.js が正しく読み込まれていません。");
@@ -468,25 +490,22 @@ function onCourseChange() {
   }
 
   const selectedCourse = document.getElementById("courseSelect").value;
-  
-  // コース（入門: nhapmon_*, 初級1: socap1_*）でカードを絞り込み
   currentCourseCards = rolePlayData.filter(card => card.level.startsWith(selectedCourse));
 
   const cardSelect = document.getElementById("cardSelect");
   cardSelect.innerHTML = `<option value="">-- 番号を選択してください (${currentCourseCards.length}問) --</option>`;
 
-  currentCourseCards.forEach((card, index) => {
+  currentCourseCards.forEach((card) => {
     const opt = document.createElement("option");
     opt.value = card.id;
     opt.textContent = `${card.title}`;
     cardSelect.appendChild(opt);
   });
 
-  // カード表示をクリア
   clearTeacherCard();
 }
 
-// 番号プルダウン変更時：選択された教員カードを表示
+// 番号プルダウン変更時
 function onCardSelect() {
   const cardSelect = document.getElementById("cardSelect");
   const selectedId = cardSelect.value;
@@ -547,7 +566,7 @@ function renderTeacherCard(card) {
     </div>
   `;
 
-  // 学生側の指示確認アコーディオンもセットアップ
+  // 学生側指示の確認アコーディオン
   const studentAccordionBox = document.getElementById("studentAccordionBox");
   const studentAccordionContent = document.getElementById("studentAccordionContent");
   
@@ -599,6 +618,32 @@ function toggleStudentAccordion() {
 }
 
 // ==========================================
+// ★「評価する」ボタン処理
+// ==========================================
+function openEvaluationSheet() {
+  // A1:氏名、B1:Can-doの達成（３点） 、C1:やり取り（３点）、D1:正確さ（２点）、E1:流暢さ（１点）、F1:発音等（１点）、G1:コメント
+  const headerData = [
+    "氏名",
+    "Can-doの達成（３点） ",
+    "やり取り（３点）",
+    "正確さ（２点）",
+    "流暢さ（１点）",
+    "発音等（１点）",
+    "コメント"
+  ].join("\t");
+
+  // クリップボードにヘッダー文字列を自動コピー
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(headerData).catch(err => {
+      console.warn("クリップボード書き込みエラー:", err);
+    });
+  }
+
+  // 別ウィンドウでGoogleスプレッドシートを開く
+  window.open(EVALUATION_SHEET_URL, "_blank");
+}
+
+// ==========================================
 // タイマー機能（90秒）
 // ==========================================
 function startTimer(seconds) {
@@ -624,7 +669,6 @@ function startTimer(seconds) {
         sound.currentTime = 0;
         sound.play().catch(e => console.warn("音声再生エラー:", e));
       }
-      // スマホのバイブレーション（対応機種）
       if (navigator.vibrate) {
         navigator.vibrate([300, 100, 300]);
       }
