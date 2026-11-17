@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>会話試験：ロールプレイカード生成 Ver 0.6</title>
+<title>会話試験：ロールプレイカード生成 Ver 0.7</title>
 <style>
 * {
   margin: 0;
@@ -25,13 +25,43 @@ body {
   padding: 15px 20px;
   margin-top: 5px;
 }
-h1 {
+
+/* タイトルとQRコードを横並びにするヘッダーエリア */
+.header-area {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.header-area h1 {
   text-align: center;
   color: #2c3e50;
   font-size: 1.9em;
-  margin-bottom: 12px;
+  margin-bottom: 0;
   letter-spacing: 1.5px;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+.qr-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+.qr-link:hover {
+  transform: scale(1.08);
+}
+/* ★QRコードの表示サイズ（32px） */
+.qr-image {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  background-color: #ffffff;
+  padding: 2px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
 }
 
 /* タイトル下のセレクトボックス配置エリア */
@@ -192,7 +222,7 @@ rt {
   color: #475569;
 }
 
-/* ★学生カードの日本語非表示用スタイル */
+/* 学生カードの日本語非表示用スタイル */
 #studentCard.hide-jp .student-jp-content {
   display: none !important;
 }
@@ -207,7 +237,7 @@ rt {
   margin-bottom: 16px;
 }
 
-/* ★日本語表示切替チェックボックス */
+/* 日本語表示切替チェックボックス */
 .checkbox-label {
   display: flex;
   align-items: center;
@@ -344,7 +374,18 @@ footer {
   color: #ecf0f1;
   font-size: 0.9em;
 }
+
 @media (max-width: 768px) {
+  .header-area {
+    gap: 8px;
+  }
+  .header-area h1 {
+    font-size: 1.5em;
+  }
+  .qr-image {
+    width: 26px;
+    height: 26px;
+  }
   .cards-container {
     grid-template-columns: 1fr;
   }
@@ -366,7 +407,7 @@ footer {
 </head>
 <body>
 <div class="container">
-    <!-- タイトル ＆ QRコード -->
+  <!-- タイトル ＆ QRコード -->
   <div class="header-area">
     <h1>会話試験：ロールプレイカード</h1>
     <a href="qr.png" target="_blank" class="qr-link" title="QRコードを別タブで拡大表示">
@@ -420,7 +461,6 @@ footer {
 
   <!-- 操作ボタングループ -->
   <div class="controls-container">
-    <!-- ★ボタンの左に配置したチェックボックス（デフォルト：未チェック） -->
     <label class="checkbox-label" for="showStudentJpCheck">
       <input type="checkbox" id="showStudentJpCheck" onchange="onStudentJpCheckChange()">
       <span>日本語表示</span>
@@ -449,9 +489,9 @@ footer {
 <!-- アラート音声ファイル -->
 <audio id="alertSound" src="https://itm-kaiwa.github.io/IRODORI/2869-preview.mp3" preload="auto"></audio>
 
-<!-- フッター（Ver 0.5） -->
+<!-- フッター（Ver 0.7） -->
 <footer>
-  <span style="margin-right: 15px; opacity: 0.9;">Ver 0.6</span>© 2026 ITM-Group All rights Reserved.
+  <span style="margin-right: 15px; opacity: 0.9;">Ver 0.7</span>© 2026 ITM-Group All rights Reserved.
 </footer>
 
 <!-- 外部データファイル読み込み -->
@@ -472,7 +512,6 @@ function onLevelChange() {
   resetAll();
 }
 
-// ★チェックボックスの切り替え時に即座に反映
 function onStudentJpCheckChange() {
   const isChecked = document.getElementById("showStudentJpCheck").checked;
   const studentEl = document.getElementById("studentCard");
@@ -537,7 +576,7 @@ function drawRandomStudentCard() {
     </div>
   `;
 
-  // チェック状態を反映（未チェックなら hide-jp クラスを付与）
+  // チェック状態を反映
   onStudentJpCheckChange();
 
   hideTeacherCard();
@@ -702,4 +741,3 @@ async function toggleRecording() {
 </script>
 </body>
 </html>
-```
