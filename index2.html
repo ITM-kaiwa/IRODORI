@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>教員用ロールプレイカード (スマホ版) Ver 0.8</title>
+<title>教員用ロールプレイカード (スマホ版) Ver 0.9</title>
 <style>
 * {
   margin: 0;
@@ -156,7 +156,6 @@ h1 {
 
 /* 指示リスト */
 .instruction-box {
-  background-color: #f8fafc;
   border-radius: 10px;
   padding: 12px 14px;
   border-left: 4px solid #10b981;
@@ -270,7 +269,7 @@ rt {
   margin-bottom: 4px;
 }
 
-/* タイマー・録音・評価エリア */
+/* タイマー・録音エリア */
 .timer-record-box {
   background-color: #ffffff;
   border-radius: 16px;
@@ -333,16 +332,6 @@ button:active {
   100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
 }
 
-/* ★「評価する」ボタン（Googleスプレッドシート風グリーン） */
-.btn-evaluate {
-  background: linear-gradient(45deg, #10b981, #059669);
-  color: white;
-  width: 100%;
-  padding: 12px 16px;
-  font-size: 1.0em;
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
-}
-
 /* 録音再生エリア */
 #recordingPlaybackArea {
   display: none;
@@ -363,6 +352,139 @@ button:active {
   font-size: 0.9em;
 }
 
+/* 画面内評価フォームエリア */
+.eval-box {
+  background-color: #ffffff;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  border-top: 4px solid #10b981;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.eval-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+  color: #065f46;
+  font-size: 1.05em;
+}
+.eval-total-badge {
+  background: #d1fae5;
+  color: #065f46;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.95em;
+}
+.eval-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.eval-field label {
+  font-size: 0.85em;
+  font-weight: bold;
+  color: #334155;
+}
+.eval-input, .eval-select, .eval-textarea {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 1.0em;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  background-color: #f8fafc;
+  color: #1e293b;
+}
+.eval-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.btn-submit-eval {
+  background: linear-gradient(45deg, #10b981, #059669);
+  color: white;
+  width: 100%;
+  padding: 13px 16px;
+  font-size: 1.0em;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+}
+.btn-submit-eval:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* 送信履歴エリア */
+.history-box {
+  background-color: #ffffff;
+  border-radius: 14px;
+  padding: 14px 16px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+  border: 1px solid #cbd5e1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9em;
+  font-weight: bold;
+  color: #475569;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 6px;
+}
+.btn-clear-history {
+  background: #f1f5f9;
+  color: #64748b;
+  font-size: 0.75em;
+  padding: 4px 10px;
+  border-radius: 12px;
+  border: 1px solid #cbd5e1;
+}
+.history-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 220px;
+  overflow-y: auto;
+}
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f8fafc;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border-left: 4px solid #10b981;
+  font-size: 0.9em;
+}
+.history-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.history-name {
+  font-weight: bold;
+  color: #1e293b;
+}
+.history-meta {
+  font-size: 0.8em;
+  color: #64748b;
+}
+.history-score {
+  font-weight: bold;
+  color: #059669;
+  background: #d1fae5;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 0.9em;
+  white-space: nowrap;
+}
+
 footer {
   margin-top: auto;
   padding: 14px 0 6px;
@@ -378,7 +500,7 @@ footer {
   <!-- ヘッダー -->
   <header>
     <h1><span>👁️</span> 教員用ロールカード</h1>
-    <div class="sub-title">会話試験 スマホ確認画面</div>
+    <div class="sub-title">会話試験 スマホ確認・評価画面</div>
   </header>
 
   <!-- カード選択ドロップダウンエリア -->
@@ -425,18 +547,15 @@ footer {
     <div class="accordion-content" id="studentAccordionContent"></div>
   </div>
 
-  <!-- タイマー ＆ 録音 ＆ 評価エリア -->
+  <!-- タイマー ＆ 録音エリア -->
   <div class="timer-record-box">
     <div class="timer-row">
       <button class="btn-timer" onclick="startTimer(90)">⏱️ 90秒タイマー</button>
       <div id="timerDisplay">01:30</div>
     </div>
-    
+
     <!-- 録音ボタン -->
     <button class="btn-record" id="recordBtn" onclick="toggleRecording()">🎙️ 録音開始</button>
-
-    <!-- ★録音ボタンの直下に配置した「評価する」ボタン -->
-    <button class="btn-evaluate" onclick="openEvaluationSheet()">📊 評価する (Googleスプレッドシート)</button>
 
     <!-- 録音再生エリア -->
     <div id="recordingPlaybackArea">
@@ -446,12 +565,90 @@ footer {
     </div>
   </div>
 
+  <!-- 画面内評価入力エリア -->
+  <div class="eval-box">
+    <div class="eval-header">
+      <span>📊 会話試験 評価入力</span>
+      <span class="eval-total-badge">合計: <span id="evalTotalScore">0</span> / 10点</span>
+    </div>
+
+    <div class="eval-field">
+      <label for="evalStudentName">学生氏名（必須）</label>
+      <input type="text" id="evalStudentName" class="eval-input" placeholder="例：グエン・バン・A">
+    </div>
+
+    <div class="eval-grid">
+      <div class="eval-field">
+        <label for="scoreCando">Can-do達成 (3点)</label>
+        <select id="scoreCando" class="eval-select" onchange="updateTotalScore()">
+          <option value="3">3点</option>
+          <option value="2">2点</option>
+          <option value="1">1点</option>
+          <option value="0" selected>0点</option>
+        </select>
+      </div>
+
+      <div class="eval-field">
+        <label for="scoreInteraction">やり取り (3点)</label>
+        <select id="scoreInteraction" class="eval-select" onchange="updateTotalScore()">
+          <option value="3">3点</option>
+          <option value="2">2点</option>
+          <option value="1">1点</option>
+          <option value="0" selected>0点</option>
+        </select>
+      </div>
+
+      <div class="eval-field">
+        <label for="scoreAccuracy">正確さ (2点)</label>
+        <select id="scoreAccuracy" class="eval-select" onchange="updateTotalScore()">
+          <option value="2">2点</option>
+          <option value="1">1点</option>
+          <option value="0" selected>0点</option>
+        </select>
+      </div>
+
+      <div class="eval-field">
+        <label for="scoreFluency">流暢さ (1点)</label>
+        <select id="scoreFluency" class="eval-select" onchange="updateTotalScore()">
+          <option value="1">1点</option>
+          <option value="0" selected>0点</option>
+        </select>
+      </div>
+
+      <div class="eval-field">
+        <label for="scorePronunciation">発音等 (1点)</label>
+        <select id="scorePronunciation" class="eval-select" onchange="updateTotalScore()">
+          <option value="1">1点</option>
+          <option value="0" selected>0点</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="eval-field">
+      <label for="evalComment">コメント（任意）</label>
+      <textarea id="evalComment" class="eval-textarea" rows="2" placeholder="良かった点や課題など"></textarea>
+    </div>
+
+    <button type="button" class="btn-submit-eval" id="submitEvalBtn" onclick="submitEvaluation()">
+      📤 スプレッドシートに記録する
+    </button>
+  </div>
+
+  <!-- 送信履歴一時表示エリア -->
+  <div class="history-box" id="evalHistoryBox" style="display: none;">
+    <div class="history-header">
+      <span>✅ 送信済み履歴（<span id="historyCount">0</span>件）</span>
+      <button type="button" class="btn-clear-history" onclick="clearEvalHistory()">履歴クリア</button>
+    </div>
+    <ul class="history-list" id="evalHistoryList"></ul>
+  </div>
+
   <!-- アラート音声ファイル -->
   <audio id="alertSound" src="https://itm-kaiwa.github.io/IRODORI/2869-preview.mp3" preload="auto"></audio>
 
   <!-- フッター -->
   <footer>
-    Ver 0.8 &nbsp; © 2026 ITM-Group All rights Reserved.
+    Ver 1.0a &nbsp; © 2026 ITM-Group All rights Reserved.
   </footer>
 </div>
 
@@ -460,11 +657,10 @@ footer {
 
 <script>
 // ============================================================
-// ★評価用スプレッドシートの設定
-// あらかじめ作成したスプレッドシートやテンプレートURLがある場合は
-// 下のURLをそのスプレッドシートのURL（または末尾を /copy にしたもの）に差し替えてください。
+// ★Google Apps Script（GAS）ウェブアプリURLの設定
+// デプロイして発行された「https://script.google.com/macros/s/〇〇〇/exec」に書き換えてください
 // ============================================================
-let EVALUATION_SHEET_URL = "https://docs.google.com/spreadsheets/d/1zAl0L0-JIxbSk5PnmyNX9MvXSijuzMT4GwVLQ6iNez4/edit";
+const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbz5VfCC5nUIWxIEcuy8mZqL1foUeEd9x35Mhw9JDlkKQPiMMWVE6wj2fskR-9frvmRX/exec";
 
 let currentCourseCards = [];
 let currentCardData = null;
@@ -477,9 +673,13 @@ let isRecording = false;
 let recordStartTime = 0;
 let recordTimerInterval = null;
 
+// 送信履歴を保持する配列（sessionStorageから復元）
+let evalHistory = JSON.parse(sessionStorage.getItem("roleplayEvalHistory") || "[]");
+
 // ページ読み込み時の初期化
 window.addEventListener("DOMContentLoaded", () => {
   onCourseChange();
+  renderEvalHistory();
 });
 
 // コース切り替え時
@@ -569,7 +769,7 @@ function renderTeacherCard(card) {
   // 学生側指示の確認アコーディオン
   const studentAccordionBox = document.getElementById("studentAccordionBox");
   const studentAccordionContent = document.getElementById("studentAccordionContent");
-  
+
   const vnListHtml = card.student.instructions_vn
     .map(text => `<li>• ${text}</li>`).join("");
   const studentJpHtml = card.student.instructions_jp
@@ -618,40 +818,137 @@ function toggleStudentAccordion() {
 }
 
 // ==========================================
-// ★「評価する」ボタン処理
+// 評価計算・GAS送信・履歴管理
 // ==========================================
-function openEvaluationSheet() {
-  const headerData = [
-    "氏名",
-    "Can-doの達成（３点） ",
-    "やり取り（３点）",
-    "正確さ（２点）",
-    "流暢さ（１点）",
-    "発音等（１点）",
-    "コメント"
-  ].join("\t");
+function updateTotalScore() {
+  const total =
+    Number(document.getElementById("scoreCando").value) +
+    Number(document.getElementById("scoreInteraction").value) +
+    Number(document.getElementById("scoreAccuracy").value) +
+    Number(document.getElementById("scoreFluency").value) +
+    Number(document.getElementById("scorePronunciation").value);
+  document.getElementById("evalTotalScore").textContent = total;
+}
 
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(headerData).catch(err => {
-      console.warn("クリップボード書き込みエラー:", err);
-    });
+async function submitEvaluation() {
+  const studentName = document.getElementById("evalStudentName").value.trim();
+  if (!studentName) {
+    alert("学生氏名を入力してください。");
+    return;
   }
 
-  // Android端末かどうかを判定
-  const isAndroid = /Android/i.test(navigator.userAgent);
+  // 重複送信チェック
+  const isDuplicate = evalHistory.some(item => item.name === studentName);
+  if (isDuplicate) {
+    const proceed = confirm(`「${studentName}」さんはすでに送信履歴にあります。\n重複して送信してもよろしいですか？`);
+    if (!proceed) return;
+  }
 
-  if (isAndroid) {
-    // https:// を取り除いてAndroidのIntentスキームでスプレッドシートアプリを直接起動
-    const cleanUrl = EVALUATION_SHEET_URL.replace(/^https?:\/\//, "");
-    const intentUrl = `intent://${cleanUrl}#Intent;scheme=https;package=com.google.android.apps.docs.editors.sheets;end`;
-    window.location.href = intentUrl;
-  } else {
-    // PCやiOSは通常通り別ウィンドウで開く
-    window.open(EVALUATION_SHEET_URL, "_blank");
+  const courseSelect = document.getElementById("courseSelect");
+  const courseText = courseSelect.options[courseSelect.selectedIndex].text;
+  const cardTitle = currentCardData ? currentCardData.title : "未選択";
+
+  const cando = Number(document.getElementById("scoreCando").value);
+  const interaction = Number(document.getElementById("scoreInteraction").value);
+  const accuracy = Number(document.getElementById("scoreAccuracy").value);
+  const fluency = Number(document.getElementById("scoreFluency").value);
+  const pronunciation = Number(document.getElementById("scorePronunciation").value);
+  const totalScore = cando + interaction + accuracy + fluency + pronunciation;
+
+  const payload = {
+    course: courseText,
+    cardTitle: cardTitle,
+    studentName: studentName,
+    cando: cando,
+    interaction: interaction,
+    accuracy: accuracy,
+    fluency: fluency,
+    pronunciation: pronunciation,
+    comment: document.getElementById("evalComment").value.trim()
+  };
+
+  const btn = document.getElementById("submitEvalBtn");
+  btn.disabled = true;
+  btn.textContent = "⏳ 送信中...";
+
+  try {
+    await fetch(GAS_WEB_APP_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "text/plain" },
+      body: JSON.stringify(payload)
+    });
+
+    const now = new Date();
+    const timeStr = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+
+    evalHistory.unshift({
+      time: timeStr,
+      name: studentName,
+      card: cardTitle,
+      total: totalScore
+    });
+    sessionStorage.setItem("roleplayEvalHistory", JSON.stringify(evalHistory));
+    renderEvalHistory();
+
+    alert(`「${studentName}」さんの評価（${totalScore}点）を記録しました！`);
+
+    // 次の学生のためにフォームをリセット
+    document.getElementById("evalStudentName").value = "";
+    document.getElementById("scoreCando").value = "0";
+    document.getElementById("scoreInteraction").value = "0";
+    document.getElementById("scoreAccuracy").value = "0";
+    document.getElementById("scoreFluency").value = "0";
+    document.getElementById("scorePronunciation").value = "0";
+    document.getElementById("evalComment").value = "";
+    updateTotalScore();
+  } catch (err) {
+    alert("送信に失敗しました。通信環境を確認してください:\n" + err.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "📤 スプレッドシートに記録する";
   }
 }
-  
- 
+
+function renderEvalHistory() {
+  const box = document.getElementById("evalHistoryBox");
+  const list = document.getElementById("evalHistoryList");
+  const count = document.getElementById("historyCount");
+
+  if (!evalHistory || evalHistory.length === 0) {
+    box.style.display = "none";
+    return;
+  }
+
+  box.style.display = "flex";
+  count.textContent = evalHistory.length;
+
+  list.innerHTML = evalHistory.map(item => `
+    <li class="history-item">
+      <div class="history-info">
+        <span class="history-name">${escapeHtml(item.name)}</span>
+        <span class="history-meta">${item.time} ・ ${escapeHtml(item.card)}</span>
+      </div>
+      <span class="history-score">${item.total} / 10点</span>
+    </li>
+  `).join("");
+}
+
+function clearEvalHistory() {
+  if (!confirm("画面上の送信履歴表示をクリアしますか？（スプレッドシートのデータは消えません）")) return;
+  evalHistory = [];
+  sessionStorage.removeItem("roleplayEvalHistory");
+  renderEvalHistory();
+}
+
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
 // ==========================================
 // タイマー機能（90秒）
 // ==========================================
@@ -731,7 +1028,6 @@ async function toggleRecording() {
         const secEl = document.getElementById("recSeconds");
         if (secEl) secEl.textContent = `${m}:${s}`;
       }, 1000);
-
     } catch (err) {
       alert("マイクの使用が許可されていないか、未対応のブラウザです:\n" + err.message);
     }
