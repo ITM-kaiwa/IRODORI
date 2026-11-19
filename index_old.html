@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>会話試験：ロールプレイカード生成 Ver 0.5</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, 'Hiragino Sans', 'Meiryo', sans-serif;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #333;
+}
+.container {
+  max-width: 1050px;
+  width: 100%;
+  padding: 15px 20px;
+  margin-top: 5px;
+}
+
+/* タイトルとQRコードを横並びにするヘッダーエリア */
+.header-area {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.header-area h1 {
+  text-align: center;
+  color: #2c3e50;
+  font-size: 1.9em;
+  margin-bottom: 0;
+  letter-spacing: 1.5px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+.qr-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+.qr-link:hover {
+  transform: scale(1.08);
+}
+/* ★QRコードの表示サイズ（60px） */
+.qr-image {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  background-color: #ffffff;
+  padding: 2px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+/* タイトル下のセレクトボックス配置エリア */
+.select-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 18px;
+}
+.level-select {
+  padding: 11px 22px;
+  font-size: 1.05em;
+  font-weight: 600;
+  border: 2px solid #007BFF;
+  border-radius: 25px;
+  background-color: #ffffff;
+  color: #1e293b;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  outline: none;
+  transition: all 0.25s ease;
+  text-align-last: center;
+}
+.level-select:focus {
+  border-color: #00c4b4;
+  box-shadow: 0 4px 20px rgba(0, 196, 180, 0.3);
+}
+
+/* 2枚のカード表示エリア */
+.cards-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.role-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  min-height: 200px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 2px dashed #cbd5e1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+.role-card.has-content {
+  border: 1px solid #94a3b8;
+  min-height: auto;
+}
+.card-empty-placeholder {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  min-height: 180px;
+  color: #94a3b8;
+  padding: 20px;
+  text-align: center;
+  font-size: 1.05em;
+  line-height: 1.6;
+}
+.card-empty-placeholder .badge {
+  display: inline-block;
+  padding: 5px 15px;
+  border-radius: 20px;
+  background-color: #e2e8f0;
+  color: #475569;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+/* カードの中身 */
+.card-header-bar {
+  background-color: #bdd78e;
+  color: #1e3a1e;
+  padding: 10px 15px;
+  font-size: 1.1em;
+  font-weight: bold;
+  border-bottom: 2px solid #8ab84d;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.card-body {
+  padding: 18px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.role-title {
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 8px;
+}
+.role-title-jp {
+  font-size: 1.25em;
+  font-weight: bold;
+  color: #1e293b;
+}
+.role-title-vn {
+  font-size: 1.05em;
+  color: #0284c7;
+  font-weight: 600;
+  margin-top: 3px;
+}
+.instruction-box {
+  background-color: #f8fafc;
+  border-radius: 10px;
+  padding: 12px 15px;
+  border-left: 4px solid #007BFF;
+}
+.instruction-box.jp-box {
+  border-left-color: #10b981;
+  background-color: #f0fdf4;
+}
+.section-tag {
+  display: inline-block;
+  font-size: 0.8em;
+  font-weight: bold;
+  padding: 2px 8px;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+.tag-vn {
+  background-color: #e0f2fe;
+  color: #0369a1;
+}
+.tag-jp {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+.instruction-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.instruction-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 1.05em;
+  line-height: 1.6;
+}
+.instruction-list .arrow {
+  color: #64748b;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+ruby {
+  ruby-align: center;
+}
+rt {
+  font-size: 0.6em;
+  color: #475569;
+}
+
+/* 学生カードの日本語非表示用スタイル */
+#studentCard.hide-jp .student-jp-content {
+  display: none !important;
+}
+
+/* 操作ボタングループエリア */
+.controls-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+/* 日本語表示切替チェックボックス */
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.0em;
+  font-weight: 600;
+  color: #334155;
+  background-color: #ffffff;
+  padding: 10px 18px;
+  border-radius: 25px;
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.25s ease;
+}
+.checkbox-label:hover {
+  background-color: #f8fafc;
+  border-color: #94a3b8;
+}
+.checkbox-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #007BFF;
+  cursor: pointer;
+}
+
+button {
+  padding: 12px 24px;
+  font-size: 1.05em;
+  font-weight: 600;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+.btn-primary {
+  background: linear-gradient(45deg, #007BFF, #00c4b4);
+  color: white;
+}
+.btn-secondary {
+  background: linear-gradient(45deg, #6c757d, #495057);
+  color: white;
+}
+.btn-teacher {
+  background: linear-gradient(45deg, #f59e0b, #d97706);
+  color: white;
+}
+.btn-reset {
+  background: #ffffff;
+  color: #64748b;
+  border: 1px solid #cbd5e1;
+}
+
+/* タイマー・録音エリア */
+.timer-record-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  padding: 15px;
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+#timerDisplay {
+  font-size: 2.2em;
+  font-weight: bold;
+  color: #e74c3c;
+  min-width: 130px;
+  text-align: center;
+  background-color: #f8fafc;
+  padding: 4px 16px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+.btn-record {
+  background: linear-gradient(45deg, #ef4444, #dc2626);
+  color: white;
+}
+.btn-record.recording-active {
+  background: linear-gradient(45deg, #b91c1c, #991b1b);
+  animation: pulse-red 1.5s infinite;
+}
+@keyframes pulse-red {
+  0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+  70% { box-shadow: 0 0 0 12px rgba(239, 68, 68, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+#recordingPlaybackArea {
+  display: none;
+  margin-top: 15px;
+  padding: 15px;
+  background-color: #f1f5f9;
+  border-radius: 12px;
+  text-align: center;
+}
+#recordingPlaybackArea audio {
+  width: 100%;
+  max-width: 400px;
+  margin: 10px 0;
+}
+.download-link {
+  display: inline-block;
+  color: #0284c7;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 0.95em;
+}
+.download-link:hover {
+  text-decoration: underline;
+}
+footer {
+  margin-top: auto;
+  padding: 16px;
+  width: 100%;
+  text-align: center;
+  background-color: #2c3e50;
+  color: #ecf0f1;
+  font-size: 0.9em;
+}
+
+/* 画面右端の丸型ダウンロードボタン */
+.btn-download-circle {
+  position: fixed;
+  top: 20px;
+  right: 25px;
+  z-index: 1000;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #107c41 0%, #15803d 100%);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(16, 124, 65, 0.35);
+  text-decoration: none;
+  transition: all 0.25s ease;
+  cursor: pointer;
+}
+.btn-download-circle:hover {
+  transform: scale(1.1) translateY(-2px);
+  box-shadow: 0 6px 18px rgba(16, 124, 65, 0.45);
+  background: linear-gradient(135deg, #15803d 0%, #166534 100%);
+}
+.btn-download-circle:active {
+  transform: scale(0.96);
+}
+.btn-download-circle .download-icon {
+  width: 24px;
+  height: 24px;
+  stroke: #ffffff;
+}
+/* ホバーツールチップ */
+.download-tooltip {
+  position: absolute;
+  bottom: -32px;
+  right: 50%;
+  transform: translateX(50%);
+  background: rgba(30, 41, 59, 0.9);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s, visibility 0.2s;
+  pointer-events: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+.btn-download-circle:hover .download-tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+@media (max-width: 768px) {
+  .btn-download-circle {
+    top: 14px;
+    right: 14px;
+    width: 40px;
+    height: 40px;
+  }
+  .btn-download-circle .download-icon {
+    width: 20px;
+    height: 20px;
+  }
+  .download-tooltip {
+    display: none;
+  }
+  .header-area {
+    gap: 8px;
+  }
+  .header-area h1 {
+    font-size: 1.5em;
+  }
+  .qr-image {
+    width: 45px;
+    height: 45px;
+  }
+  .cards-container {
+    grid-template-columns: 1fr;
+  }
+  .role-card {
+    min-height: 160px;
+  }
+  .level-select, button, .checkbox-label {
+    width: 100%;
+    justify-content: center;
+  }
+  .timer-record-container {
+    flex-direction: column;
+  }
+  .select-container {
+    width: 100%;
+  }
+}
+</style>
+</head>
+<body>
+<!-- 画面右端の丸型ダウンロードボタン（評価シートExcelダウンロード） -->
+<a href="IRODORI_ROLEPLAY_EVALUATION.xlsx" download="IRODORI_ROLEPLAY_EVALUATION.xlsx" class="btn-download-circle" title="評価シート（IRODORI_ROLEPLAY_EVALUATION.xlsx）をダウンロード">
+  <svg class="download-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+    <polyline points="7 10 12 15 17 10"></polyline>
+    <line x1="12" y1="15" x2="12" y2="3"></line>
+  </svg>
+  <span class="download-tooltip">評価シートDL</span>
+</a>
+
+<div class="container">
+  <!-- タイトル ＆ QRコード -->
+  <div class="header-area">
+    <h1>会話試験：ロールプレイカード</h1>
+       <a href="index2.html" target="_blank" class="qr-link" title="教員用画面を開く">
+      <img src="qr.png" alt="QRコード" class="qr-image">
+    </a>
+  </div>
+
+  <!-- タイトルの直下に配置した試験範囲プルダウン -->
+  <div class="select-container">
+    <select class="level-select" id="levelSelect" onchange="onLevelChange()">
+      <optgroup label="入門 (Nhập môn)">
+        <option value="nhapmon_1_4">入門：第１課から第４課 (Bài 1 - 4)</option>
+        <option value="nhapmon_5_8">入門：第５課から第８課 (Bài 5 - 8)</option>
+        <option value="nhapmon_9_12">入門：第９課から第１２課 (Bài 9 - 12)</option>
+        <option value="nhapmon_13_16">入門：第１３課から第１６課 (Bài 13 - 16)</option>
+        <option value="nhapmon_17_18">入門：第１７課と１８課 (Bài 17 - 18)</option>
+      </optgroup>
+      <optgroup label="初級１ (Sơ cấp 1)">
+        <option value="socap1_1_4">初級１：第１課から第４課 (Bài 1 - 4)</option>
+        <option value="socap1_5_8">初級１：第５課から第８課 (Bài 5 - 8)</option>
+        <option value="socap1_9_10">初級１：第９課と第１０課 (Bài 9 - 10)</option>
+        <option value="socap1_11_14">初級１：第１１課から第１４課 (Bài 11 - 14)</option>
+        <option value="socap1_15_18">初級１：第１５課から第１８課 (Bài 15 - 18)</option>
+      </optgroup>
+      <optgroup label="初級２ (Sơ cấp 2)">
+        <option value="socap2_1_4">初級２：第１課から第４課 (Bài 1 - 4)</option>
+        <option value="socap2_5_8">初級２：第５課から第８課 (Bài 5 - 8)</option>
+        <option value="socap2_9_12">初級２：第９課から第１２課 (Bài 9 - 12)</option>
+        <option value="socap2_13_16">初級２：第１３課から第１６課 (Bài 13 - 16)</option>
+        <option value="socap2_17_18">初級２：第１７課と第１８課 (Bài 17 - 18)</option>
+      </optgroup>
+    </select>
+  </div>
+
+  <!-- 2枚のカード領域（左：学生、右：教員） -->
+  <div class="cards-container">
+    <div class="role-card" id="studentCard">
+      <div class="card-empty-placeholder">
+        <span class="badge">Thẻ nhập vai học sinh</span>
+        <p>Nhấn nút "Rút thẻ học sinh" bên dưới<br>để hiển thị ngẫu nhiên.</p>
+      </div>
+    </div>
+
+    <div class="role-card" id="teacherCard">
+      <div class="card-empty-placeholder">
+        <span class="badge">教員用ロールカード</span>
+        <p>学生カードが表示された後、<br>「教員カード 表示/非表示」ボタンで表示できます。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 操作ボタングループ -->
+  <div class="controls-container">
+    <label class="checkbox-label" for="showStudentJpCheck">
+      <input type="checkbox" id="showStudentJpCheck" onchange="onStudentJpCheckChange()">
+      <span>日本語表示</span>
+    </label>
+
+    <button class="btn-primary" onclick="drawRandomStudentCard()">🔀 Rút thẻ học sinh</button>
+    <button class="btn-teacher" id="toggleTeacherBtn" onclick="toggleTeacherCard()" disabled>👁️ 教員カード 表示 / 非表示</button>
+    <button class="btn-reset" onclick="resetAll()">🔄 リセット</button>
+  </div>
+
+  <!-- タイマー ＆ 録音エリア -->
+  <div class="timer-record-container">
+    <button class="btn-secondary" onclick="startTimer(90)">⏱️ 90秒タイマー</button>
+    <div id="timerDisplay">01:30</div>
+    <button class="btn-record" id="recordBtn" onclick="toggleRecording()">🎙️ 録音開始</button>
+  </div>
+
+  <!-- 録音停止後に表示されるオーディオプレイヤー -->
+  <div id="recordingPlaybackArea">
+    <div><strong>🎧 今回の録音データ:</strong></div>
+    <audio id="recordedAudioPlayer" controls></audio><br>
+    <a id="downloadRecordLink" class="download-link" download="roleplay_exam.webm">💾 録音音声（WebM）を保存</a>
+  </div>
+</div>
+
+<!-- アラート音声ファイル -->
+<audio id="alertSound" src="https://itm-kaiwa.github.io/IRODORI/2869-preview.mp3" preload="auto"></audio>
+
+<!-- フッター（Ver 0.95） -->
+<footer>
+  <span style="margin-right: 15px; opacity: 0.9;">Ver 0.95a</span>© 2026 ITM-Group All rights Reserved.
+</footer>
+
+<!-- 外部データファイル読み込み -->
+<script src="data.js"></script>
+
+<script>
+let currentCardData = null;
+let isTeacherCardVisible = false;
+let timerInterval = null;
+
+let mediaRecorder = null;
+let audioChunks = [];
+let isRecording = false;
+let recordStartTime = 0;
+let recordTimerInterval = null;
+
+function onLevelChange() {
+  resetAll();
+}
+
+function onStudentJpCheckChange() {
+  const isChecked = document.getElementById("showStudentJpCheck").checked;
+  const studentEl = document.getElementById("studentCard");
+  if (isChecked) {
+    studentEl.classList.remove("hide-jp");
+  } else {
+    studentEl.classList.add("hide-jp");
+  }
+}
+
+function drawRandomStudentCard() {
+  if (typeof rolePlayData === "undefined" || rolePlayData.length === 0) {
+    alert("data.js が正しく読み込まれていないか、データが空です。");
+    return;
+  }
+
+  const selectedLevel = document.getElementById("levelSelect").value;
+  const selectedLevelText = document.getElementById("levelSelect").selectedOptions[0].text;
+
+  const filteredCards = rolePlayData.filter(card => card.level === selectedLevel);
+
+  if (filteredCards.length === 0) {
+    alert(`「${selectedLevelText}」のロールカードはまだ登録されていません。\nChưa có thẻ nhập vai cho phạm vi này.`);
+    return;
+  }
+
+  const randomIndex = Math.floor(Math.random() * filteredCards.length);
+  currentCardData = filteredCards[randomIndex];
+
+  const studentEl = document.getElementById("studentCard");
+  studentEl.classList.add("has-content");
+
+  const vnListHtml = currentCardData.student.instructions_vn
+    .map(text => `<li><span class="arrow">↓</span><span>${text}</span></li>`).join("");
+
+  const jpListHtml = currentCardData.student.instructions_jp
+    .map(text => `<li><span class="arrow">↓</span><span>${text}</span></li>`).join("");
+
+  studentEl.innerHTML = `
+    <div class="card-header-bar">
+      <span>${currentCardData.title}</span>
+    </div>
+    <div class="card-body">
+      <div class="role-title">
+        <div class="role-title-vn">${currentCardData.student.role_vn}</div>
+        <div class="role-title-jp student-jp-content">${currentCardData.student.role_jp_ruby}</div>
+      </div>
+      <!-- ベトナム語（上） -->
+      <div class="instruction-box">
+        <span class="section-tag tag-vn">Tiếng Việt</span>
+        <ul class="instruction-list">
+          ${vnListHtml}
+        </ul>
+      </div>
+      <!-- 日本語訳（下：チェックが入っている時のみ表示） -->
+      <div class="instruction-box jp-box student-jp-content">
+        <span class="section-tag tag-jp">日本語訳</span>
+        <ul class="instruction-list">
+          ${jpListHtml}
+        </ul>
+      </div>
+    </div>
+  `;
+
+  // チェック状態を反映
+  onStudentJpCheckChange();
+
+  hideTeacherCard();
+  document.getElementById("toggleTeacherBtn").disabled = false;
+}
+
+function toggleTeacherCard() {
+  if (!currentCardData) return;
+  if (isTeacherCardVisible) {
+    hideTeacherCard();
+  } else {
+    showTeacherCard();
+  }
+}
+
+function showTeacherCard() {
+  const teacherEl = document.getElementById("teacherCard");
+  teacherEl.classList.add("has-content");
+
+  const jpListHtml = currentCardData.teacher.instructions_jp
+    .map(text => `<li><span class="arrow">↓</span><span>${text}</span></li>`).join("");
+
+  teacherEl.innerHTML = `
+    <div class="card-header-bar">
+      <span>${currentCardData.title}</span>
+    </div>
+    <div class="card-body">
+      <div class="role-title">
+        <div class="role-title-jp">${currentCardData.teacher.role_jp_ruby}</div>
+      </div>
+      <div class="instruction-box jp-box" style="flex-grow: 1;">
+        <span class="section-tag tag-jp">日本語（教員指示）</span>
+        <ul class="instruction-list">
+          ${jpListHtml}
+        </ul>
+      </div>
+    </div>
+  `;
+  isTeacherCardVisible = true;
+}
+
+function hideTeacherCard() {
+  const teacherEl = document.getElementById("teacherCard");
+  teacherEl.classList.remove("has-content");
+  teacherEl.innerHTML = `
+    <div class="card-empty-placeholder">
+      <span class="badge">教員用ロールカード</span>
+      <p>「教員カード 表示/非表示」ボタンを押すと<br>学生カードに対応したカードが表示されます。</p>
+    </div>
+  `;
+  isTeacherCardVisible = false;
+}
+
+function resetAll() {
+  currentCardData = null;
+  isTeacherCardVisible = false;
+
+  const studentEl = document.getElementById("studentCard");
+  studentEl.classList.remove("has-content");
+  studentEl.innerHTML = `
+    <div class="card-empty-placeholder">
+      <span class="badge">Thẻ nhập vai học sinh</span>
+      <p>Nhấn nút "Rút thẻ học sinh" bên dưới<br>để hiển thị ngẫu nhiên.</p>
+    </div>
+  `;
+
+  hideTeacherCard();
+  document.getElementById("toggleTeacherBtn").disabled = true;
+
+  clearInterval(timerInterval);
+  document.getElementById("timerDisplay").textContent = "01:30";
+
+  if (isRecording) {
+    toggleRecording();
+  }
+}
+
+function startTimer(seconds) {
+  clearInterval(timerInterval);
+  const display = document.getElementById("timerDisplay");
+  const sound = document.getElementById("alertSound");
+  const startTime = Date.now();
+  const endTime = startTime + (seconds * 1000);
+
+  updateDisplay();
+  timerInterval = setInterval(updateDisplay, 200);
+
+  function updateDisplay() {
+    const now = Date.now();
+    let timeLeft = Math.max(0, Math.ceil((endTime - now) / 1000));
+    let minutes = Math.floor(timeLeft / 60);
+    let remainingSeconds = timeLeft % 60;
+    display.textContent = `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
+
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      if (sound) {
+        sound.currentTime = 0;
+        sound.play().catch(e => console.warn("音声再生エラー:", e));
+      }
+      setTimeout(() => {
+        alert("90秒が経過しました！会話を始めてください。");
+      }, 100);
+    }
+  }
+}
+
+async function toggleRecording() {
+  const recordBtn = document.getElementById("recordBtn");
+  const playbackArea = document.getElementById("recordingPlaybackArea");
+
+  if (!isRecording) {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaRecorder = new MediaRecorder(stream);
+      audioChunks = [];
+
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data.size > 0) audioChunks.push(e.data);
+      };
+
+      mediaRecorder.onstop = () => {
+        const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
+        const audioUrl = URL.createObjectURL(audioBlob);
+        const player = document.getElementById("recordedAudioPlayer");
+        const downloadLink = document.getElementById("downloadRecordLink");
+
+        player.src = audioUrl;
+        downloadLink.href = audioUrl;
+        playbackArea.style.display = "block";
+
+        stream.getTracks().forEach(track => track.stop());
+      };
+
+      mediaRecorder.start();
+      isRecording = true;
+      recordStartTime = Date.now();
+      recordBtn.classList.add("recording-active");
+      recordBtn.innerHTML = `⏹️ 録音停止 (<span id="recSeconds">00:00</span>)`;
+
+      recordTimerInterval = setInterval(() => {
+        const elapsed = Math.floor((Date.now() - recordStartTime) / 1000);
+        const m = String(Math.floor(elapsed / 60)).padStart(2, '0');
+        const s = String(elapsed % 60).padStart(2, '0');
+        const secEl = document.getElementById("recSeconds");
+        if (secEl) secEl.textContent = `${m}:${s}`;
+      }, 1000);
+
+    } catch (err) {
+      alert("マイクの使用が許可されていないか、対応していないブラウザです:\n" + err.message);
+    }
+  } else {
+    if (mediaRecorder && mediaRecorder.state !== "inactive") {
+      mediaRecorder.stop();
+    }
+    isRecording = false;
+    clearInterval(recordTimerInterval);
+    recordBtn.classList.remove("recording-active");
+    recordBtn.innerHTML = `🎙️ 録音開始`;
+  }
+}
+</script>
+</body>
+</html>
